@@ -21,9 +21,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var _size = MediaQuery.of(context).size;
+    final _size = MediaQuery.of(context).size;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           width: _size.width,
@@ -64,15 +65,15 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Positioned.fill(
                           child: WebView(
-                            key: UniqueKey(),
-                            initialUrl: 'https://www.instagram.com/aimetix/',
+                            // key: UniqueKey(),
+                            initialUrl: 'https://instagram.com/decentdeck',
                             javascriptMode: JavascriptMode.unrestricted,
-                            onPageFinished: (String s) {
-                              print(s);
-                              setState(() {
-                                _isLoading = !_isLoading;
-                              });
-                            },
+                            // onPageStarted: (String s) {
+                            //   print(s);
+                            //   // setState(() {
+                            //   //   // _isLoading = !_isLoading;
+                            //   // });
+                            // },
                           ),
                         ),
                         Positioned(
