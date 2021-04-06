@@ -1,13 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instsinfu/Widgets/back_button.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 import 'package:webview_flutter/webview_flutter.dart';
-
-enum menul { menu1, menu2, menu3 }
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,8 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isLoading;
-  String _loadedUrl;
   bool _isGranted;
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
@@ -26,8 +20,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _isGranted = false;
-    _isLoading = true;
-    _loadedUrl = "https://www.instagram.com/accounts/login/";
     _checkPermissionStatus();
   }
 
@@ -84,9 +76,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    var _size = MediaQuery.of(context).size;
+    final _size = MediaQuery.of(context).size;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
         child: SafeArea(
@@ -178,9 +171,6 @@ class _HomePageState extends State<HomePage> {
                                         "})()")
                                     .catchError(
                                         (onError) => debugPrint('$onError'));
-                                setState(() {
-                                  _isLoading = false;
-                                });
                               },
                             ),
                           ),
