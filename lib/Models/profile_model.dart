@@ -1,17 +1,17 @@
 class ProfileModel {
-  final String name,
+  final String userName,
       userid,
       userProfilelink,
-      website,
+      email,
       category,
       engrate,
       avgLike;
 
   ProfileModel(
-      {this.name,
+      {this.userName,
       this.userid,
       this.userProfilelink,
-      this.website,
+      this.email,
       this.category,
       this.engrate,
       this.avgLike});
