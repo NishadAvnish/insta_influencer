@@ -5,7 +5,8 @@ class ProfileModel {
       email,
       category,
       engrate,
-      avgLike;
+      avgLike,
+      currentNo;
 
   ProfileModel(
       {this.userName,
@@ -14,7 +15,8 @@ class ProfileModel {
       this.email,
       this.category,
       this.engrate,
-      this.avgLike});
+      this.avgLike,
+      this.currentNo});
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel();
