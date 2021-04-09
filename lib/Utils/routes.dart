@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:instsinfu/Screens/homePage.dart';
+
+import 'package:instsinfu/Screens/home_page.dart';
 import 'package:instsinfu/Screens/secondScreen.dart';
 
 class RouteGenerator {
