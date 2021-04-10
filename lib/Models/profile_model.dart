@@ -1,12 +1,6 @@
 class ProfileModel {
-  final String userName,
-      userid,
-      userProfilelink,
-      email,
-      category,
-      engrate,
-      avgLike;
-  final int currentNo;
+  String userName, userid, userProfilelink, email, category, engrate, avgLike;
+  int currentNo;
 
   ProfileModel(
       {this.userName,
@@ -30,4 +24,27 @@ class ProfileModel {
       currentNo: json["currentNo"],
     );
   }
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      "userName": userName,
+      "userid": userid,
+      "userProfilelink": userProfilelink,
+      "email": email,
+      "category": category,
+      "engrate": engrate,
+      "avgLike": avgLike
+    };
+
+    return map;
+  }
+
+  // ProfileModel.fromMaps(Map<String, dynamic> map) {
+  //   userName = map["userName"];
+  //   userid = map["userid"];
+  //   userProfilelink = map["userProfilelink"];
+  //   email = map["email"];
+  //   category = map["category"];
+  //   engrate = map["engrate"];
+  //   avgLike = map["avgLike"];
+  // }
 }

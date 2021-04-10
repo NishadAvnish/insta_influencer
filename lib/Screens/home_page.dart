@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
+import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/back_button.dart';
 import 'package:instsinfu/Widgets/home_appbar_widget.dart';
 import 'package:instsinfu/Widgets/show_model.dart';
 import 'package:instsinfu/Widgets/webview_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DatabaseHelper databasehelper;
   PageController _pageController;
   int _currentPageIndex;
   final Completer<WebViewController> _controller =
@@ -27,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    databasehelper = DatabaseHelper();
     _currentPageIndex = 0;
     _count = 0;
     _isLoading = true;
@@ -141,7 +146,10 @@ class _HomePageState extends State<HomePage> {
                                 flex: 1,
                                 child: IconButton(
                                     icon: Icon(Icons.more_vert),
-                                    onPressed: () {}))
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, "/secondScreen");
+                                    }))
                           ],
                         ),
                       ),
@@ -208,7 +216,41 @@ class _HomePageState extends State<HomePage> {
                                   style: ElevatedButton.styleFrom(
                                       shape: CircleBorder(),
                                       primary: Colors.green),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    print(_homeProvider
+                                        .instaUserList[_currentPageIndex]
+                                        .userProfilelink);
+                                    databasehelper.addTransToDatabase(
+                                        ProfileModel(
+                                            userid: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .userid,
+                                            email: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .email,
+                                            avgLike: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .avgLike,
+                                            category: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .category,
+                                            engrate: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .engrate,
+                                            userName: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .userName,
+                                            userProfilelink: _homeProvider
+                                                .instaUserList[
+                                                    _currentPageIndex]
+                                                .userProfilelink));
+                                  },
                                   child: Icon(
                                     Icons.done,
                                     size: 50,
