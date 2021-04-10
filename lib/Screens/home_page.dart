@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   int _count;
   bool _isLoading;
   bool _isLoadingWebview;
-
+  String _currentUrl = "";
   @override
   void initState() {
     super.initState();
@@ -199,39 +199,9 @@ class _HomePageState extends State<HomePage> {
                                       shape: CircleBorder(),
                                       primary: Colors.green),
                                   onPressed: () {
-                                    print(_homeProvider
-                                        .instaUserList[_currentPageIndex]
-                                        .userProfilelink);
                                     databasehelper.addTransToDatabase(
-                                        ProfileModel(
-                                            userid: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .userid,
-                                            email: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .email,
-                                            avgLike: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .avgLike,
-                                            category: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .category,
-                                            engrate: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .engrate,
-                                            userName: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .userName,
-                                            userProfilelink: _homeProvider
-                                                .instaUserList[
-                                                    _currentPageIndex]
-                                                .userProfilelink));
+                                        _homeProvider
+                                            .instaUserList[_currentPageIndex]);
                                   },
                                   child: Icon(
                                     Icons.done,
@@ -280,10 +250,13 @@ class _HomePageState extends State<HomePage> {
         Factory(() => VerticalDragGestureRecognizer()),
       ].toSet(),
       onPageFinished: (s) {
+        setState(() {
+          _currentUrl = s;
+        });
         try {
           _webViewController.evaluateJavascript("javascript:(function() { " +
               // "document.getElementsByTagName('nav')[0].style.display='none';" +
-              // "document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
+              //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
               "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
               "})()");
         } catch (e) {

@@ -36,7 +36,7 @@ class DatabaseHelper {
 
   _onCreate(Database db, int vesion) async {
     db.execute(
-        'CREATE TABLE $instaTable($colUserid TEXT PRIMARY KEY, $colUserName TEXT, $colUserProfilelink TEXT, $colEmail TEXT, $colEngrate TEXT , $colCategory TEXT , $colAvgLike TEXT, )');
+        'CREATE TABLE $instaTable($colUserid TEXT PRIMARY KEY, $colUserName TEXT, $colUserProfilelink TEXT, $colEmail TEXT, $colEngrate TEXT , $colCategory TEXT , $colAvgLike TEXT)');
   }
 
   Future<List<ProfileModel>> getTrans() async {
@@ -58,7 +58,7 @@ class DatabaseHelper {
   Future<bool> isPresent(ProfileModel transaction) async {
     var dbClient = await database;
     final List<Map<String, dynamic>> maps = await dbClient.rawQuery(
-        "SELECT * FROM $instaTable WHERE $colUserid = '${transaction.userid}'");
+        "SELECT * FROM $instaTable WHERE $colUserid = ${transaction.userid}");
     if (maps.length > 0) {
       return true;
     } else
@@ -68,13 +68,14 @@ class DatabaseHelper {
   Future<void> addTransToDatabase(ProfileModel transaction) async {
     var dbClient = await database;
     //  await dbClient.insert(instaTable, transaction.toMap());
-    final bool _isPresent = await isPresent(transaction);
-    if (!_isPresent) {
-      await dbClient.insert(
-        instaTable,
-        transaction.toMap(),
-      );
-    }
+    //  final bool _isPresent = await isPresent(transaction);
+    //  if (!_isPresent) {
+    print(transaction);
+    await dbClient.insert(
+      instaTable,
+      transaction.toMap(),
+    );
+    // }
   }
 
   Future close() async {
