@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:instsinfu/Models/profile_model.dart';
 import 'package:http/http.dart' as http;
@@ -21,16 +20,11 @@ class InstaProfileProvider with ChangeNotifier {
           _result.toList().map((json) => ProfileModel.fromJson(json)).toList();
 
       _instaUserList.addAll(List<ProfileModel>.from(_tempList));
+      print(_instaUserList.length);
 
-      if (_startingRow == 1) {
-        // api related work to get rid of first row on first call
-        _instaUserList.removeAt(0);
-      }
-
-      _isLast = _tempList.length < 9;
+      _isLast = _tempList.length < 19;
 
       _startingRow = _instaUserList[_instaUserList.length - 1].currentNo;
-      print(_startingRow);
 
       notifyListeners();
     } else {

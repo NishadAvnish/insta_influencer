@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
@@ -23,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   WebViewController _webViewController;
   int _count;
   bool _isLoading;
+  bool _isLoadingWebview;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _HomePageState extends State<HomePage> {
     _currentPageIndex = 0;
     _count = 0;
     _isLoading = true;
+    _isLoadingWebview = false;
     _pageController = PageController(initialPage: 0);
 
     // if (mounted) _checkPermissionStatus();
@@ -41,7 +45,6 @@ class _HomePageState extends State<HomePage> {
     final _provider = Provider.of<InstaProfileProvider>(context, listen: false);
     if (_provider.islast == false) {
       await _provider.fetchData();
-      print("Avnish");
 
       if (_count == 0)
         setState(() {
@@ -57,19 +60,13 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   Provider.of<InstaProfileProvider>(context, listen: false).fetchData();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
     final _homeProvider = Provider.of<InstaProfileProvider>(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
@@ -153,6 +150,12 @@ class _HomePageState extends State<HomePage> {
                             MediaQuery.of(context).padding.bottom,
                         constraints: BoxConstraints(minHeight: 150),
                         child: Stack(children: [
+                          Container(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.black
+                                    : Colors.white,
+                          ),
                           Positioned.fill(
                             child: PageView.builder(
                                 controller: _pageController,
@@ -162,45 +165,24 @@ class _HomePageState extends State<HomePage> {
                                   });
 
                                   if (index ==
-                                      _homeProvider.instaUserList.length - 4) {
+                                      _homeProvider.instaUserList.length - 12) {
                                     _fetch();
                                   }
-                                  // _webViewController.loadUrl(_homeProvider
-                                  //     .instaUserList[_currentPageIndex]
-                                  //     .userProfilelink);
                                 },
                                 itemCount: _homeProvider.instaUserList.length,
                                 itemBuilder: (context, index) {
-                                  return Text(_homeProvider
+                                  return customWebView(_homeProvider
                                       .instaUserList[index].userProfilelink);
-                                  // return WebView(
-                                  //   initialUrl: _homeProvider
-                                  //       .instaUserList[index].userProfilelink,
-                                  //   javascriptMode: JavascriptMode.unrestricted,
-                                  //   onWebViewCreated:
-                                  //       (WebViewController webViewController) {
-                                  //     _webViewController = webViewController;
-                                  //     _controller.complete(webViewController);
-                                  //   },
-                                  //   onPageFinished: (s) {
-                                  //     _webViewController
-                                  //         .evaluateJavascript("javascript:(function() { " +
-                                  //             "document.getElementsByTagName('nav')[0].style.display='none';" +
-                                  //             "document.getElementsByClassName('sqdOP  L3NKy _4pI4F  y3zKF     ')[0].style.display='none';" +
-                                  //             "document.getElementsByClassName('e-Ph9 ccgHY l9Ww0 ')[0].style.display='none';" +
-                                  //             "document.getElementsByTagName('footer')[0].style.display='none';" +
-                                  //             "document.getElementsByClassName('tCibT qq7_A  z4xUb w5S7h')[0].style.display='none';" +
-                                  //             "})()")
-                                  //         .catchError(
-                                  //             (onError) => debugPrint('$onError'));
-                                  //   },
-                                  // );
                                 }),
                           ),
                           Positioned(
                             bottom: 25,
                             left: 25,
                             right: 20,
+                            // child: _webViewController.currentUrl().toString() ==
+                            //         "https://www.instagram.com/accounts/login/"
+                            //     ? Container()
+                            //     :
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -220,10 +202,9 @@ class _HomePageState extends State<HomePage> {
                                       shape: CircleBorder(),
                                       primary: Colors.red),
                                   onPressed: () {
-                                    _pageController.animateToPage(
-                                        _currentPageIndex + 1,
-                                        curve: Curves.linear,
-                                        duration: Duration(milliseconds: 200));
+                                    _pageController.nextPage(
+                                        duration: Duration(milliseconds: 50),
+                                        curve: Curves.easeIn);
                                   },
                                   child: Icon(
                                     Icons.close,
@@ -241,6 +222,32 @@ class _HomePageState extends State<HomePage> {
                 ),
         ),
       ),
+    );
+  }
+
+  Widget customWebView(String initialUrl) {
+    return WebView(
+      key: ValueKey(initialUrl),
+      initialUrl: initialUrl,
+      javascriptMode: JavascriptMode.unrestricted,
+      onWebViewCreated: (WebViewController webViewController) {
+        _webViewController = webViewController;
+        // _controller.complete(webViewController);
+      },
+      gestureRecognizers: [
+        Factory(() => VerticalDragGestureRecognizer()),
+      ].toSet(),
+      onPageFinished: (s) {
+        try {
+          _webViewController.evaluateJavascript("javascript:(function() { " +
+              // "document.getElementsByTagName('nav')[0].style.display='none';" +
+              // "document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
+              "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+              "})()");
+        } catch (e) {
+          debugPrint('$e');
+        }
+      },
     );
   }
 }
