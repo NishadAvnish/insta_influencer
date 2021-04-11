@@ -13,7 +13,6 @@ class _SecondScreenState extends State<SecondScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     databasehelper = DatabaseHelper();
     refresh();

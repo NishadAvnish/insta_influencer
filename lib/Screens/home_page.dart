@@ -2,17 +2,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:instsinfu/Models/profile_model.dart';
+import 'package:instsinfu/Providers/currentindex_notifier.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/back_button.dart';
-import 'package:instsinfu/Widgets/home_appbar_widget.dart';
-import 'package:instsinfu/Widgets/show_model.dart';
-import 'package:instsinfu/Widgets/webview_widget.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:instsinfu/Widgets/home_app_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -23,22 +18,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DatabaseHelper databasehelper;
   PageController _pageController;
-  int _currentPageIndex;
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
   WebViewController _webViewController;
   int _count;
   bool _isLoading;
-  bool _isLoadingWebview;
-  String _currentUrl = "";
   @override
   void initState() {
     super.initState();
     databasehelper = DatabaseHelper();
-    _currentPageIndex = 0;
     _count = 0;
     _isLoading = true;
-    _isLoadingWebview = false;
     _pageController = PageController(initialPage: 0);
 
     // if (mounted) _checkPermissionStatus();
@@ -68,10 +58,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-    final _homeProvider = Provider.of<InstaProfileProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
@@ -85,71 +73,7 @@ class _HomePageState extends State<HomePage> {
                   height: _size.height,
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: kToolbarHeight,
-                        width: double.infinity,
-                        child: Row(
-                          children: [
-                            Flexible(
-                              flex: 6,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "Eng. Rate",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .button
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                      ),
-                                      Text(_homeProvider
-                                          .instaUserList[_currentPageIndex]
-                                          .engrate),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        "Avg. Like",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .button
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                      ),
-                                      Text(_homeProvider
-                                          .instaUserList[_currentPageIndex]
-                                          .avgLike),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                                flex: 1,
-                                child: IconButton(
-                                    icon: Icon(Icons.more_vert),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, "/secondScreen");
-                                    }))
-                          ],
-                        ),
-                      ),
+                      HomeAppBar(),
                       Container(
                         width: _size.width,
                         height: _size.height -
@@ -158,39 +82,30 @@ class _HomePageState extends State<HomePage> {
                             MediaQuery.of(context).padding.bottom,
                         constraints: BoxConstraints(minHeight: 150),
                         child: Stack(children: [
-                          Container(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.black
-                                    : Colors.white,
-                          ),
                           Positioned.fill(
-                            child: PageView.builder(
-                                controller: _pageController,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentPageIndex = index;
+                            child: Consumer<InstaProfileProvider>(
+                                builder: (context, homeProvider, child) {
+                              return PageView.builder(
+                                  controller: _pageController,
+                                  onPageChanged: (index) {
+                                    currentIndexValue.value = index;
+                                    if (index ==
+                                        homeProvider.instaUserList.length -
+                                            12) {
+                                      _fetch();
+                                    }
+                                  },
+                                  itemCount: homeProvider.instaUserList.length,
+                                  itemBuilder: (context, index) {
+                                    return customWebView(homeProvider
+                                        .instaUserList[index].userProfilelink);
                                   });
-
-                                  if (index ==
-                                      _homeProvider.instaUserList.length - 12) {
-                                    _fetch();
-                                  }
-                                },
-                                itemCount: _homeProvider.instaUserList.length,
-                                itemBuilder: (context, index) {
-                                  return customWebView(_homeProvider
-                                      .instaUserList[index].userProfilelink);
-                                }),
+                            }),
                           ),
                           Positioned(
                             bottom: 25,
                             left: 25,
                             right: 20,
-                            // child: _webViewController.currentUrl().toString() ==
-                            //         "https://www.instagram.com/accounts/login/"
-                            //     ? Container()
-                            //     :
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -200,8 +115,11 @@ class _HomePageState extends State<HomePage> {
                                       primary: Colors.green),
                                   onPressed: () {
                                     databasehelper.addTransToDatabase(
-                                        _homeProvider
-                                            .instaUserList[_currentPageIndex]);
+                                        Provider.of<InstaProfileProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .instaUserList[
+                                            currentIndexValue.value]);
                                   },
                                   child: Icon(
                                     Icons.done,
@@ -250,9 +168,6 @@ class _HomePageState extends State<HomePage> {
         Factory(() => VerticalDragGestureRecognizer()),
       ].toSet(),
       onPageFinished: (s) {
-        setState(() {
-          _currentUrl = s;
-        });
         try {
           _webViewController.evaluateJavascript("javascript:(function() { " +
               // "document.getElementsByTagName('nav')[0].style.display='none';" +
