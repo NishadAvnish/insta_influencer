@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         darkTheme: MyThemes.darkTheme,
         theme: MyThemes.lightTheme,
-        initialRoute: counter == 0 ? "/login" : "/home",
+        // initialRoute: counter == 0 ? "/login" : "/home",
+        initialRoute: "/secondScreen",
         onGenerateRoute: RouteGenerator.generateRoute,
       ),
     );

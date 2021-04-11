@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
+import 'package:instsinfu/Widgets/second_list_Item.dart';
 
 class SecondScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class SecondScreen extends StatefulWidget {
 class _SecondScreenState extends State<SecondScreen> {
   DatabaseHelper databasehelper;
   List<ProfileModel> profileModel = [];
+  int _currentGridIndex = 0;
 
   @override
   void initState() {
@@ -32,187 +34,133 @@ class _SecondScreenState extends State<SecondScreen> {
           title: Text("Favourite"),
           centerTitle: true,
         ),
-        body: FutureBuilder(
-          future: databasehelper.getTrans(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasData) {
-              profileModel = snapshot.data;
-              return snapshot.data.length == 0
-                  ? Center(
-                      child: Text("No Data Found!"),
-                    )
-                  : ListView.builder(
-                      itemBuilder: (context, int index) {
-                        ProfileModel profile = ProfileModel();
-                        profile = profileModel[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 05),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushNamed("/singleUserWeb",
-                                  arguments: profile.userProfilelink);
-                            },
-                            child: Dismissible(
-                              // Each Dismissible must contain a Key. Keys allow Flutter to
-                              // uniquely identify widgets.
-                              key: UniqueKey(),
-                              // Provide a function that tells the app
-                              // what to do after an item has been swiped away.
-                              onDismissed: (direction) {
-                                // Remove the item from the data source.
-                                DatabaseHelper()
-                                    .delete(profile.userid)
-                                    .then((value) {
-                                  setState(() {
-                                    snapshot.data.removeAt(index);
-                                  });
+        body: Column(
+          children: [
+            Container(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 12.0),
+                  child: GridView.builder(
+                      itemCount: 3,
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: 3,
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 4,
+                          crossAxisSpacing: 10,
+                          mainAxisExtent: 80),
+                      itemBuilder: (context, index) {
+                        return _rating("${index + 1}", index);
+                      }),
+                )),
+            Expanded(
+              child: FutureBuilder(
+                future: databasehelper.getTrans(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasData) {
+                    profileModel = snapshot.data;
+                    return snapshot.data.length == 0
+                        ? Center(
+                            child: Text("No Data Found!"),
+                          )
+                        : ListView.builder(
+                            itemBuilder: (context, int index) {
+                              ProfileModel profile = ProfileModel();
+                              profile = profileModel[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 05),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        "/singleUserWeb",
+                                        arguments: profile.userProfilelink);
+                                  },
+                                  child: Dismissible(
+                                    // Each Dismissible must contain a Key. Keys allow Flutter to
+                                    // uniquely identify widgets.
+                                    key: UniqueKey(),
+                                    // Provide a function that tells the app
+                                    // what to do after an item has been swiped away.
+                                    onDismissed: (direction) {
+                                      // Remove the item from the data source.
+                                      DatabaseHelper()
+                                          .delete(profile.userid)
+                                          .then((value) {
+                                        setState(() {
+                                          snapshot.data.removeAt(index);
+                                        });
 
-                                  // Show a snackbar. This snackbar could also contain "Undo" actions.
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              "Item deleted Successfully!")));
-                                }).catchError((e) {
-                                  setState(() {});
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content:
-                                              Text("Something went wrong!")));
-                                });
-                              },
-                              child: Container(
-                                height: 100,
-                                child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20))),
-                                    elevation: 2,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 20),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor:
-                                                Colors.brown.shade800,
-                                            child: Text(profile.userName[0]
-                                                .toUpperCase()),
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                profile.userName,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              profile.category == "null"
-                                                  ? SizedBox()
-                                                  : Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              bottom: 4.0,
-                                                              top: 4.0),
-                                                      child: Text(
-                                                        profile.category,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                    ),
-                                              Row(
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.favorite,
-                                                        size: 12,
-                                                      ),
-                                                      SizedBox(width: 3),
-                                                      Text(
-                                                        "${profile.avgLike}",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 6,
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.timeline,
-                                                        size: 12,
-                                                      ),
-                                                      SizedBox(width: 3),
-                                                      Text(
-                                                        "${profile.engrate}",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          profile.email != null
-                                              ? IconButton(
-                                                  icon: Icon(Icons.email),
-                                                  onPressed: () {
-                                                    Clipboard.setData(
-                                                            new ClipboardData(
-                                                                text: profile
-                                                                    .userProfilelink))
-                                                        .then((value) {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .hideCurrentSnackBar();
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(SnackBar(
-                                                              content: Text(
-                                                                  "Email c opied to clipboard")));
-                                                    });
-                                                  })
-                                              : SizedBox()
-                                        ],
-                                      ),
-                                    )
-
-                                    // ListTile(
-                                    //   leading: RotatedBox(quarterTurns: -1, child: Text("Category")),
-                                    //   title: Text("Name"),
-                                    // ),
+                                        // Show a snackbar. This snackbar could also contain "Undo" actions.
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    "Item deleted Successfully!")));
+                                      }).catchError((e) {
+                                        setState(() {});
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    "Something went wrong!")));
+                                      });
+                                    },
+                                    child: ListItem(
+                                      profile: profile,
                                     ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      itemCount: profileModel.length,
-                    );
-            } else
-              return Center(child: new Text("no data"));
-          },
+                                  ),
+                                ),
+                              );
+                            },
+                            itemCount: profileModel.length,
+                          );
+                  } else
+                    return Center(child: new Text("no data"));
+                },
+              ),
+            ),
+          ],
         ));
+  }
+
+  Widget _rating(String text, int index) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentGridIndex = index;
+        });
+      },
+      child: Container(
+        height: 100,
+        width: 100,
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            border: Border.all(
+                width: 2,
+                color: _currentGridIndex == index
+                    ? Colors.orange
+                    : Colors.black54),
+            borderRadius: BorderRadius.circular(15.0)),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: Theme.of(context).textTheme.button,
+              ),
+              Icon(Icons.star)
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
