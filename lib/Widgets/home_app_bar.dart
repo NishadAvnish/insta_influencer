@@ -59,7 +59,7 @@ class HomeAppBar extends StatelessWidget {
                 Flexible(
                     flex: 1,
                     child: IconButton(
-                        icon: Icon(Icons.more_vert),
+                        icon: Icon(Icons.save),
                         onPressed: () {
                           Navigator.pushNamed(context, "/secondScreen");
                         }))

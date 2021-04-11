@@ -1,14 +1,12 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Providers/currentindex_notifier.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/back_button.dart';
+import 'package:instsinfu/Widgets/custom_webview.dart';
 import 'package:instsinfu/Widgets/home_app_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,9 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DatabaseHelper databasehelper;
   PageController _pageController;
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
-  WebViewController _webViewController;
+
   int _count;
   bool _isLoading;
   @override
@@ -97,8 +93,10 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   itemCount: homeProvider.instaUserList.length,
                                   itemBuilder: (context, index) {
-                                    return customWebView(homeProvider
-                                        .instaUserList[index].userProfilelink);
+                                    return CustomWebView(
+                                        initialUrl: homeProvider
+                                            .instaUserList[index]
+                                            .userProfilelink);
                                   });
                             }),
                           ),
@@ -114,12 +112,25 @@ class _HomePageState extends State<HomePage> {
                                       shape: CircleBorder(),
                                       primary: Colors.green),
                                   onPressed: () {
-                                    databasehelper.addTransToDatabase(
-                                        Provider.of<InstaProfileProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .instaUserList[
-                                            currentIndexValue.value]);
+                                    databasehelper
+                                        .addTransToDatabase(
+                                            Provider.of<InstaProfileProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .instaUserList[
+                                                currentIndexValue.value])
+                                        .then((value) {
+                                      final snackBar = SnackBar(
+                                          content: Text('Saved to database'));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }).catchError((error) {
+                                      final snackBar = SnackBar(
+                                          content:
+                                              Text('Something Went Wrong'));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    });
                                   },
                                   child: Icon(
                                     Icons.done,
@@ -152,32 +163,6 @@ class _HomePageState extends State<HomePage> {
                 ),
         ),
       ),
-    );
-  }
-
-  Widget customWebView(String initialUrl) {
-    return WebView(
-      key: ValueKey(initialUrl),
-      initialUrl: initialUrl,
-      javascriptMode: JavascriptMode.unrestricted,
-      onWebViewCreated: (WebViewController webViewController) {
-        _webViewController = webViewController;
-        // _controller.complete(webViewController);
-      },
-      gestureRecognizers: [
-        Factory(() => VerticalDragGestureRecognizer()),
-      ].toSet(),
-      onPageFinished: (s) {
-        try {
-          _webViewController.evaluateJavascript("javascript:(function() { " +
-              // "document.getElementsByTagName('nav')[0].style.display='none';" +
-              //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
-              "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
-              "})()");
-        } catch (e) {
-          debugPrint('$e');
-        }
-      },
     );
   }
 }
