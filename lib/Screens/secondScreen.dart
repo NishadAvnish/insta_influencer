@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SecondScreen extends StatefulWidget {
   @override

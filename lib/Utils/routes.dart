@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:instsinfu/Screens/home_page.dart';
+import 'package:instsinfu/Screens/login_page.dart';
 import 'package:instsinfu/Screens/secondScreen.dart';
 
 class RouteGenerator {
@@ -12,6 +13,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => HomePage());
       case "/secondScreen":
         return MaterialPageRoute(builder: (context) => SecondScreen());
+      case "/login":
+        return MaterialPageRoute(builder: (context) => LoginPage());
     }
   }
 }
