@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SecondScreen extends StatefulWidget {
   @override
@@ -46,7 +47,7 @@ class _SecondScreenState extends State<SecondScreen> {
                     child: Container(
                       // decoration: BoxDecoration(
                       //     borderRadius: BorderRadius.all(Radius.circular(30))),
-                      height: 100,
+                      height: 150,
 
                       child: Card(
                           shape: RoundedRectangleBorder(
@@ -58,16 +59,25 @@ class _SecondScreenState extends State<SecondScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RotatedBox(
-                                    quarterTurns: -1,
-                                    child: Text(
-                                      profile.category,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                    )),
+                                CircleAvatar(
+                                  backgroundColor: Colors.brown.shade800,
+                                  child:
+                                      Text(profile.userName[0].toUpperCase()),
+                                ),
+
+                                // RotatedBox(
+                                //     quarterTurns: -1,
+                                //     child: profile.category == "null"
+                                //         ? SizedBox()
+                                //         : Text(
+                                //             profile.category,
+                                //             style: TextStyle(
+                                //                 fontSize: 20,
+                                //                 fontWeight: FontWeight.bold),
+                                //           )),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       profile.userName,
@@ -75,7 +85,29 @@ class _SecondScreenState extends State<SecondScreen> {
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(profile.userid),
+                                    profile.category == "null"
+                                        ? SizedBox()
+                                        : Text(
+                                            profile.category,
+                                            style: TextStyle(
+                                                color: Colors.black38,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                    profile.userid == "null"
+                                        ? SizedBox()
+                                        : Text(
+                                            profile.userid,
+                                            style: TextStyle(
+                                                color: Colors.black26,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                    Row(
+                                      children: [
+                                        Text("Avg Like : ${profile.engrate}")
+                                      ],
+                                    )
                                   ],
                                 ),
                                 IconButton(
