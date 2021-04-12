@@ -45,12 +45,12 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) {
       return ProfileModel(
         userName: maps[i]["userName"],
-        userid: maps[i]["userId"].toString(),
-        userProfilelink: maps[i]["userProfile"],
+        userid: maps[i]["userid"].toString(),
+        userProfilelink: maps[i]["userProfilelink"],
         email: maps[i]["email"],
         category: maps[i]["category"],
-        engrate: maps[i]["engRate"].toString(),
-        avgLike: maps[i]["avgLikes"].toString(),
+        engrate: maps[i]["engrate"].toString(),
+        avgLike: maps[i]["avgLike"].toString(),
       );
     });
   }
@@ -67,15 +67,19 @@ class DatabaseHelper {
 
   Future<void> addTransToDatabase(ProfileModel transaction) async {
     var dbClient = await database;
-    //  await dbClient.insert(instaTable, transaction.toMap());
-    //  final bool _isPresent = await isPresent(transaction);
-    //  if (!_isPresent) {
-    print(transaction);
-    await dbClient.insert(
+    final bool _isPresent = await isPresent(transaction);
+    if (!_isPresent) {
+      await dbClient.insert(instaTable, transaction.toMap());
+    }
+  }
+
+  Future<void> delete(String userId) async {
+    var dbClient = await database;
+    return await dbClient.delete(
       instaTable,
-      transaction.toMap(),
+      where: '$colUserid = ?',
+      whereArgs: [userId],
     );
-    // }
   }
 
   Future close() async {
