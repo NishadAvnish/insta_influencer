@@ -11,6 +11,7 @@ class SingleUserWebView extends StatelessWidget {
       body: SafeArea(
           child: CustomWebView(
         initialUrl: initialUrl,
+        flag: 1,
       )),
     );
   }

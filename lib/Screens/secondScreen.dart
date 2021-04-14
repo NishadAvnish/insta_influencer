@@ -20,14 +20,14 @@ class _SecondScreenState extends State<SecondScreen> {
     super.initState();
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     databasehelper = DatabaseHelper();
-    fetchData();
+    // fetchData();
   }
 
-  fetchData() {
-    setState(() {
-      databasehelper.getTrans();
-    });
-  }
+  // fetchData() {
+  //   setState(() {
+  //     databasehelper.getTrans(rating: _currentGridIndex);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class _SecondScreenState extends State<SecondScreen> {
                 )),
             Expanded(
               child: FutureBuilder(
-                future: databasehelper.getTrans(rating: 1),
+                future: databasehelper.getTrans(rating: _currentGridIndex),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     return Center(child: CircularProgressIndicator());
@@ -139,6 +139,7 @@ class _SecondScreenState extends State<SecondScreen> {
       onTap: () {
         setState(() {
           _currentGridIndex = index;
+          //   databasehelper.getTrans(rating: _currentGridIndex);
         });
       },
       child: Container(

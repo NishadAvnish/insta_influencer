@@ -7,7 +7,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class CustomWebView extends StatefulWidget {
   final initialUrl;
-  CustomWebView({Key key, this.initialUrl}) : super(key: key);
+  final int flag;
+  CustomWebView({Key key, this.initialUrl, this.flag}) : super(key: key);
 
   @override
   _CustomWebViewState createState() => _CustomWebViewState();
@@ -32,15 +33,16 @@ class _CustomWebViewState extends State<CustomWebView> {
           Factory(() => VerticalDragGestureRecognizer()),
         ].toSet(),
         onPageFinished: (s) {
-          try {
-            _webViewController.evaluateJavascript("javascript:(function() { " +
-                // "document.getElementsByTagName('nav')[0].style.display='none';" +
-                //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
-                "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
-                "})()");
-          } catch (e) {
-            debugPrint('$e');
-          }
+          if (widget.flag != null)
+            try {
+              _webViewController.evaluateJavascript("javascript:(function() { " +
+                  // "document.getElementsByTagName('nav')[0].style.display='none';" +
+                  //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
+                  "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+                  "})()");
+            } catch (e) {
+              debugPrint('$e');
+            }
         },
       ),
     );

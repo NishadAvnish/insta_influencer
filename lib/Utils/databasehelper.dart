@@ -70,15 +70,15 @@ class DatabaseHelper {
     });
   }
 
-  // Future<bool> isPresent(ProfileModel transaction) async {
-  //   var dbClient = await database;
-  //   final List<Map<String, dynamic>> maps = await dbClient.rawQuery(
-  //       "SELECT * FROM $instaTable WHERE $colUserid = ${transaction.userid}");
-  //   if (maps.length > 0) {
-  //     return true;
-  //   } else
-  //     return false;
-  // }
+  Future<bool> isPresent(String userId, String instaTable) async {
+    var dbClient = await database;
+    final List<Map<String, dynamic>> maps = await dbClient
+        .rawQuery("SELECT * FROM $instaTable WHERE $colUserid = $userId");
+    if (maps.length > 0) {
+      return true;
+    } else
+      return false;
+  }
 
   Future<void> addTransToDatabase(Map<String, dynamic> transaction) async {
     var dbClient = await database;
@@ -89,10 +89,10 @@ class DatabaseHelper {
       instaTable = instaTable_2;
     } else
       instaTable = instaTable_3;
-    // final bool _isPresent = await isPresent(transaction);
-    // if (!_isPresent) {
-    await dbClient.insert(instaTable, transaction);
-    // }
+    final bool _isPresent = await isPresent(transaction["userid"], instaTable);
+    if (!_isPresent) {
+      await dbClient.insert(instaTable, transaction);
+    }
   }
 
   Future<void> delete({String userId, int rating}) async {

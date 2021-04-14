@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Providers/currentindex_notifier.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
