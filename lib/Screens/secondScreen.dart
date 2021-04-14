@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instsinfu/Models/profile_model.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/second_list_Item.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class SecondScreen extends StatefulWidget {
   @override
@@ -17,11 +20,12 @@ class _SecondScreenState extends State<SecondScreen> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     databasehelper = DatabaseHelper();
-    refresh();
+    fetchData();
   }
 
-  refresh() {
+  fetchData() {
     setState(() {
       databasehelper.getTrans();
     });
@@ -51,7 +55,7 @@ class _SecondScreenState extends State<SecondScreen> {
                           crossAxisSpacing: 10,
                           mainAxisExtent: 80),
                       itemBuilder: (context, index) {
-                        return _rating("${index + 1}", index);
+                        return _ratingBar("${index + 1}", index);
                       }),
                 )),
             Expanded(
@@ -130,7 +134,7 @@ class _SecondScreenState extends State<SecondScreen> {
         ));
   }
 
-  Widget _rating(String text, int index) {
+  Widget _ratingBar(String text, int index) {
     return GestureDetector(
       onTap: () {
         setState(() {

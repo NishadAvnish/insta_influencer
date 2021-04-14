@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:instsinfu/Models/profile_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ListItem extends StatelessWidget {
   final ProfileModel profile;
@@ -82,13 +83,14 @@ class ListItem extends StatelessWidget {
                     ? IconButton(
                         icon: Icon(Icons.email),
                         onPressed: () {
-                          Clipboard.setData(new ClipboardData(
-                                  text: profile.userProfilelink))
-                              .then((value) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("Email copied to clipboard")));
-                          });
+                          _openEmail(profile.email);
+                          // Clipboard.setData(new ClipboardData(
+                          //         text: profile.userProfilelink))
+                          //     .then((value) {
+                          //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //       content: Text("Email copied to clipboard")));
+                          // });
                         })
                     : SizedBox()
               ],
@@ -101,5 +103,20 @@ class ListItem extends StatelessWidget {
           // ),
           ),
     );
+  }
+
+  Future<void> _openEmail(String emailTo) async {
+    final Uri params = Uri(
+      scheme: 'mailto',
+      path: emailTo,
+      // query: 'subject=""&body=""', //add subject and body here
+    );
+
+    var url = params.toString();
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch Email';
+    }
   }
 }
