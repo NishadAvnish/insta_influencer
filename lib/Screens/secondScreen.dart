@@ -60,7 +60,7 @@ class _SecondScreenState extends State<SecondScreen> {
                 )),
             Expanded(
               child: FutureBuilder(
-                future: databasehelper.getTrans(),
+                future: databasehelper.getTrans(rating: 1),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     return Center(child: CircularProgressIndicator());
@@ -92,29 +92,29 @@ class _SecondScreenState extends State<SecondScreen> {
                                     // what to do after an item has been swiped away.
                                     onDismissed: (direction) {
                                       // Remove the item from the data source.
-                                      DatabaseHelper()
-                                          .delete(profile.userid)
-                                          .then((value) {
-                                        setState(() {
-                                          snapshot.data.removeAt(index);
-                                        });
+                                      // DatabaseHelper()
+                                      //     .delete(profile.userid)
+                                      //     .then((value) {
+                                      //   setState(() {
+                                      //     snapshot.data.removeAt(index);
+                                      //   });
 
-                                        // Show a snackbar. This snackbar could also contain "Undo" actions.
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    "Item deleted Successfully!")));
-                                      }).catchError((e) {
-                                        setState(() {});
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    "Something went wrong!")));
-                                      });
+                                      //   // Show a snackbar. This snackbar could also contain "Undo" actions.
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .hideCurrentSnackBar();
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(SnackBar(
+                                      //           content: Text(
+                                      //               "Item deleted Successfully!")));
+                                      // }).catchError((e) {
+                                      //   setState(() {});
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .hideCurrentSnackBar();
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(SnackBar(
+                                      //           content: Text(
+                                      //               "Something went wrong!")));
+                                      // });
                                     },
                                     child: ListItem(
                                       profile: profile,
