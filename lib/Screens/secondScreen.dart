@@ -58,7 +58,7 @@ class _SecondScreenState extends State<SecondScreen> {
                 )),
             Expanded(
               child: FutureBuilder(
-                future: databasehelper.getTrans(rating: _currentGridIndex),
+                future: databasehelper.getTrans(rating: _currentGridIndex + 1),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     return Center(child: CircularProgressIndicator());
