@@ -1,5 +1,12 @@
 class ProfileModel {
-  String userName, userid, userProfilelink, email, category, engrate, avgLike;
+  String userName,
+      userid,
+      userProfilelink,
+      email,
+      category,
+      engrate,
+      avgLike,
+      rating;
   int currentNo;
 
   ProfileModel(
@@ -10,7 +17,8 @@ class ProfileModel {
       this.category,
       this.engrate,
       this.avgLike,
-      this.currentNo});
+      this.currentNo,
+      this.rating});
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
     return ProfileModel(
@@ -32,7 +40,8 @@ class ProfileModel {
       "email": email,
       "category": category,
       "engrate": engrate,
-      "avgLike": avgLike
+      "avgLike": avgLike,
+      "rating": rating
     };
 
     return map;
