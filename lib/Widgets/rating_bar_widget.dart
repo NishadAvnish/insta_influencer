@@ -17,111 +17,75 @@ class RatingBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _deviceBrightness = MediaQuery.of(context).platformBrightness;
     return Container(
-      color: Colors.white,
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.only(bottom: 4, top: 4, left: 0, right: 0),
+      color: _deviceBrightness == Brightness.dark
+          ? Colors.grey.shade900
+          : Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: CircleBorder(), primary: Colors.green),
-            onPressed: () {
-              final _templist =
-                  Provider.of<InstaProfileProvider>(context, listen: false)
-                      .instaUserList[currentIndexValue.value];
-              databasehelper.addTransToDatabase(
-                  // Provider.of<InstaProfileProvider>(context, listen: false)
-                  //     .instaUserList[currentIndexValue.value]
-
-                  <String, dynamic>{
-                    "userName": _templist.userName,
-                    "userid": _templist.userid,
-                    "userProfilelink": _templist.userProfilelink,
-                    "email": _templist.email,
-                    "category": _templist.category,
-                    "engrate": _templist.engrate,
-                    "avgLike": _templist.avgLike,
-                    "rating": 1,
-                  }).then((value) {
-                final snackBar = SnackBar(content: Text('Saved to database'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }).catchError((error) {
-                final snackBar =
-                    SnackBar(content: Text('Something Went Wrong'));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              });
-              _pageController.nextPage(
-                  duration: Duration(milliseconds: 50), curve: Curves.easeIn);
-            },
-            child: Icon(
-              Icons.done,
-              size: 50,
-              color: Colors.white,
+          GestureDetector(
+            onTap: () => _onButtonClickNextPage(1, context),
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 1,
+                      color: _deviceBrightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+                  shape: BoxShape.circle),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  "Assets/Images/1star.gif",
+                  // height: 40,
+                  // width: 40,
+                ),
+              ),
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: CircleBorder(), primary: Colors.green),
-            onPressed: () {
-              // databasehelper
-              //     .addTransToDatabase(
-              //         Provider.of<InstaProfileProvider>(
-              //                     context,
-              //                     listen: false)
-              //                 .instaUserList[
-              //             currentIndexValue.value])
-              //     .then((value) {
-              //   final snackBar = SnackBar(
-              //       content: Text('Saved to database'));
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(snackBar);
-              // }).catchError((error) {
-              //   final snackBar = SnackBar(
-              //       content:
-              //           Text('Something Went Wrong'));
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(snackBar);
-              // });
-              _pageController.nextPage(
-                  duration: Duration(milliseconds: 50), curve: Curves.easeIn);
-            },
-            child: Icon(
-              Icons.done,
-              size: 50,
-              color: Colors.white,
+          GestureDetector(
+            onTap: () => _onButtonClickNextPage(2, context),
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 1,
+                      color: _deviceBrightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+                  shape: BoxShape.circle),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  "Assets/Images/2star.gif",
+                ),
+              ),
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: CircleBorder(), primary: Colors.green),
-            onPressed: () {
-              // databasehelper
-              //     .addTransToDatabase(
-              //         Provider.of<InstaProfileProvider>(
-              //                     context,
-              //                     listen: false)
-              //                 .instaUserList[
-              //             currentIndexValue.value])
-              //     .then((value) {
-              //   final snackBar = SnackBar(
-              //       content: Text('Saved to database'));
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(snackBar);
-              // }).catchError((error) {
-              //   final snackBar = SnackBar(
-              //       content:
-              //           Text('Something Went Wrong'));
-              //   ScaffoldMessenger.of(context)
-              //       .showSnackBar(snackBar);
-              // });
-              _pageController.nextPage(
-                  duration: Duration(milliseconds: 50), curve: Curves.easeIn);
-            },
-            child: Icon(
-              Icons.done,
-              size: 50,
-              color: Colors.white,
+          GestureDetector(
+            onTap: () => _onButtonClickNextPage(3, context),
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 1,
+                      color: _deviceBrightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black),
+                  shape: BoxShape.circle),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset(
+                  "Assets/Images/3star.gif",
+                ),
+              ),
             ),
           ),
           ElevatedButton(
@@ -140,5 +104,35 @@ class RatingBarWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _onButtonClickNextPage(int rating, BuildContext context) {
+    _pageController.nextPage(
+        duration: Duration(milliseconds: 1), curve: Curves.easeIn);
+    final _templist = Provider.of<InstaProfileProvider>(context, listen: false)
+        .instaUserList[currentIndexValue.value];
+
+    databasehelper.addTransToDatabase(
+        // Provider.of<InstaProfileProvider>(context, listen: false)
+        //     .instaUserList[currentIndexValue.value]
+
+        <String, dynamic>{
+          "userName": _templist.userName,
+          "userid": _templist.userid,
+          "userProfilelink": _templist.userProfilelink,
+          "email": _templist.email,
+          "category": _templist.category,
+          "engrate": _templist.engrate,
+          "avgLike": _templist.avgLike,
+          "rating": rating,
+        }).then((value) {
+      final snackBar = SnackBar(content: Text('Saved to database'));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }).catchError((error) {
+      final snackBar =
+          SnackBar(content: Text('Can\'t save : sOmething went wrong1'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
   }
 }

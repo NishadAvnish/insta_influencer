@@ -33,16 +33,21 @@ class _CustomWebViewState extends State<CustomWebView> {
           Factory(() => VerticalDragGestureRecognizer()),
         ].toSet(),
         onPageFinished: (s) {
-          if (widget.flag != null)
-            try {
-              _webViewController.evaluateJavascript("javascript:(function() { " +
-                  // "document.getElementsByTagName('nav')[0].style.display='none';" +
-                  //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
-                  "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
-                  "})()");
-            } catch (e) {
-              debugPrint('$e');
-            }
+          // if (widget.flag != null)
+          try {
+            _webViewController.evaluateJavascript("javascript:(function() { " +
+                // "document.getElementsByTagName('nav')[0].style.display='none';" +
+                //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
+                "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+
+                ///remove bottom navigation
+                "document.getElementsByClassName('Z_Gl2')[0].style.display='none';" +
+
+                ///remove use the app
+                "})()");
+          } catch (e) {
+            debugPrint('$e');
+          }
         },
       ),
     );

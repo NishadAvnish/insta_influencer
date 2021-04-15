@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 class MyThemes {
   static final darkTheme = ThemeData(
-      scaffoldBackgroundColor: Colors.grey.shade900,
-      colorScheme: ColorScheme.dark(),
-      snackBarTheme: SnackBarThemeData(
-          backgroundColor: Colors.grey.shade500,
-          contentTextStyle: TextStyle(color: Colors.white)));
+    scaffoldBackgroundColor: Colors.grey.shade900,
+    colorScheme: ColorScheme.dark(primary: Colors.black),
+    snackBarTheme: SnackBarThemeData(
+        backgroundColor: Colors.grey.shade500,
+        contentTextStyle: TextStyle(color: Colors.white)),
+    cardTheme: CardTheme(
+      color: Colors.teal,
+    ),
+  );
 
   static final lightTheme = ThemeData(
       scaffoldBackgroundColor: Colors.white,
