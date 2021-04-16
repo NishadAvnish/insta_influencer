@@ -20,6 +20,7 @@ class DatabaseHelper {
   String colAvgLike = 'avgLike';
   String colUserName = "userName";
   String colRating = "rating";
+  bool isConvrtCSV = true;
 
   Future<Database> get database async {
     if (_database != null) {
@@ -67,6 +68,31 @@ class DatabaseHelper {
           engrate: maps[i]["engrate"].toString(),
           avgLike: maps[i]["avgLike"].toString(),
           rating: maps[i]["rating"].toString());
+    });
+  }
+
+  Future<List<List<String>>> getTransCSV({int rating}) async {
+    var dbClient = await database;
+    String instaTable;
+    if (rating == 1) {
+      instaTable = instaTable_1;
+    } else if (rating == 2) {
+      instaTable = instaTable_2;
+    } else
+      instaTable = instaTable_3;
+
+    final List<Map<String, dynamic>> maps = await dbClient.query(instaTable);
+    return List.generate(maps.length, (i) {
+      return [
+        maps[i]["userName"],
+        maps[i]["userid"].toString(),
+        maps[i]["userProfilelink"],
+        maps[i]["email"],
+        maps[i]["category"],
+        maps[i]["engrate"].toString(),
+        maps[i]["avgLike"].toString(),
+        maps[i]["rating"].toString(),
+      ];
     });
   }
 
