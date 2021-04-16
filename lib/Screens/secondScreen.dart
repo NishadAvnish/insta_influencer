@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Models/profile_model.dart';
+import 'package:instsinfu/Screens/loadCsvDataScreen.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/second_list_Item.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SecondScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class _SecondScreenState extends State<SecondScreen> {
   DatabaseHelper databasehelper;
   List<ProfileModel> profileModel = [];
   int _currentGridIndex = 0;
+  bool isConvrtCSV = true;
 
   @override
   void initState() {
@@ -35,6 +39,29 @@ class _SecondScreenState extends State<SecondScreen> {
         appBar: AppBar(
           title: Text("Favourite"),
           centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.import_export),
+                onPressed: () async {
+                  List<List<String>> data =
+                      await databasehelper.getTransCSV(rating: 1);
+                  String csvData = ListToCsvConverter().convert(data);
+                  final String directory =
+                      "/storage/emulated/0/InstaInflucerCSV";
+                  // (await getApplicationDocumentsDirectory()).path;
+                  final path = "$directory/csv-${DateTime.now()}.csv";
+                  print(path);
+                  final File file = File(path);
+                  await file.writeAsString(csvData);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) {
+                        return LoadCsvDataScreen(path: path);
+                      },
+                    ),
+                  );
+                })
+          ],
         ),
         body: Column(
           children: [
