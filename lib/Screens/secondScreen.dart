@@ -6,6 +6,7 @@ import 'package:instsinfu/Screens/loadCsvDataScreen.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:instsinfu/Widgets/second_list_Item.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SecondScreen extends StatefulWidget {
@@ -18,6 +19,35 @@ class _SecondScreenState extends State<SecondScreen> {
   List<ProfileModel> profileModel = [];
   int _currentGridIndex = 0;
   bool isConvrtCSV = true;
+
+  Future<void> _exportCSV() async {
+    /*'/storage/emulated/0/WhatsApp/Media/.Statuses/74fd861ea3354097987b53ebcfa63905.jpg' 
+    spliting and getting last element result this "74fd861ea3354097987b53ebcfa63905.jpg"*/
+
+    // final _nameList = _list[_modifiedIndex].split("/");
+    // final _fileName = _nameList[_nameList.length - 1];
+
+    List<List<String>> data = await databasehelper.getTransCSV(rating: 1);
+    String csvData = ListToCsvConverter().convert(data);
+
+    final _fileName = "csv-${DateTime.now()}.csv";
+    Directory _dir = await getApplicationDocumentsDirectory();
+    // Directory _dir = Directory("/storage/emulated/0/InstaInflucerCSV");
+    if (!_dir.existsSync()) {
+      _dir = await _dir.create(recursive: true);
+    }
+
+    await File(Directory(path.join(_dir.path, _fileName)).path)
+        .writeAsString(csvData);
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) {
+          return LoadCsvDataScreen(path: path.join(_dir.path, _fileName));
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
