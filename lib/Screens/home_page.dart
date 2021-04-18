@@ -47,10 +47,8 @@ class _HomePageState extends State<HomePage> {
     await Provider.of<LoginCurrentNoProvider>(context, listen: false)
         .fetchLoginData();
     if (!_isLogin) {
-      if (_loginProvider.loginCurrentdata.isLogin != null &&
-              _loginProvider.loginCurrentdata.isLogin == false ||
-          _loginProvider.loginCurrentdata.isLogin != null &&
-              _loginProvider.loginCurrentdata.isLogin == true &&
+      if (_loginProvider.loginCurrentdata.isLogin == false ||
+          _loginProvider.loginCurrentdata.isLogin == true &&
               DateTime.now()
                       .difference(_loginProvider.loginCurrentdata.dateTime)
                       .inMinutes >=
@@ -116,7 +114,8 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       HomeAppBar(
-                        isLogin: _isLogin,
+                        isLogin:
+                            _isLogin && _loginProvider.loginCurrentdata.isLogin,
                       ),
                       RefreshIndicator(
                         onRefresh: () => _refresh(),
@@ -131,7 +130,8 @@ class _HomePageState extends State<HomePage> {
                             constraints: BoxConstraints(minHeight: 150),
                             child: Stack(children: [
                               Positioned.fill(
-                                child: _isLogin
+                                child: _isLogin &&
+                                        _loginProvider.loginCurrentdata.isLogin
                                     ? Consumer<InstaProfileProvider>(builder:
                                         (context, homeProvider, child) {
                                         return PageView.builder(
@@ -175,7 +175,8 @@ class _HomePageState extends State<HomePage> {
                                             ]),
                                       )),
                               ),
-                              _isLogin
+                              _isLogin &&
+                                      _loginProvider.loginCurrentdata.isLogin
                                   ? Positioned(
                                       bottom: 0,
                                       left: 0,
