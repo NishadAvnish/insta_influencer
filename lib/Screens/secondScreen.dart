@@ -145,9 +145,8 @@ class _SecondScreenState extends State<SecondScreen> {
             shape: BoxShape.rectangle,
             border: Border.all(
                 width: 2,
-                color: _currentGridIndex == index
-                    ? Colors.orange
-                    : Colors.black54),
+                color:
+                    _currentGridIndex == index ? Colors.teal : Colors.black54),
             borderRadius: BorderRadius.circular(15.0)),
         child: Center(
           child: Row(

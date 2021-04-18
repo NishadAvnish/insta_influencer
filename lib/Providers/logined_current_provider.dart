@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:instsinfu/Models/login_current_model.dart';
@@ -48,11 +49,13 @@ class LoginCurrentNoProvider with ChangeNotifier {
         "https://script.google.com/macros/s/AKfycbzMFBsat-s6Im7nn8PMS94056uAFi-Oy26CYn5o430LfB26qh8x/exec?current=${_loginCurrentdata.currentNo + currentIndexValue.value}&islogin=${isLogin}&datetime=${DateTime.now()}");
 
     http.get(_url).then((value) {
-      if (!isLogin)
+      if (!isLogin) {
+        Cron().close();
         _loginCurrentdata = LoginCurrentModel(
             currentNo: _loginCurrentdata.currentNo,
             isLogin: false,
             dateTime: _loginCurrentdata.dateTime);
+      }
 
       notifyListeners();
     }).catchError((e) {

@@ -27,24 +27,32 @@ class _loginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
+          child: SingleChildScrollView(
+        child: SizedBox(
+          height: _size.height,
+          width: _size.width,
           child: WebView(
-        initialUrl: "https://www.instagram.com/accounts/login/",
-        javascriptMode: JavascriptMode.unrestricted,
-        onPageFinished: (s) async {
-          if (s == "https://www.instagram.com/") {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => HomePage()));
-            try {
-              SharedPreferences _prefs = await SharedPreferences.getInstance();
-              await _prefs.setInt('counter', 1);
-            } catch (e) {
-              print(e);
-            }
-          }
-        },
+            initialUrl: "https://www.instagram.com/accounts/login/",
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (s) async {
+              if (s == "https://www.instagram.com/") {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => HomePage()));
+                try {
+                  SharedPreferences _prefs =
+                      await SharedPreferences.getInstance();
+                  await _prefs.setInt('counter', 1);
+                } catch (e) {
+                  print(e);
+                }
+              }
+            },
+          ),
+        ),
       )),
     );
   }

@@ -20,13 +20,11 @@ class InstaProfileProvider with ChangeNotifier {
     final response = await http.get(url);
     final _result = await json.decode(response.body);
     if (response.statusCode == 200) {
-      print("Avnish............................");
-
       final _tempList =
           _result.map((json) => ProfileModel.fromJson(json)).toList();
 
       _instaUserList.addAll(List<ProfileModel>.from(_tempList));
-      print(_instaUserList.toList().length);
+      print(_instaUserList.length);
 
       _isLast = _tempList.length < 19;
 

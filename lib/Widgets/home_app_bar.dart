@@ -30,8 +30,7 @@ class HomeAppBar extends StatelessWidget {
                           onPressed: () {
                             Provider.of<LoginCurrentNoProvider>(context,
                                     listen: false)
-                                .changeCurrentStatus(isLogin: false)
-                                .then((value) => Cron().close());
+                                .changeCurrentStatus(isLogin: false);
                           })
                       : Container(),
                 ),
