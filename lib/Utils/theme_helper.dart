@@ -7,9 +7,6 @@ class MyThemes {
     snackBarTheme: SnackBarThemeData(
         backgroundColor: Colors.grey.shade500,
         contentTextStyle: TextStyle(color: Colors.white)),
-    cardTheme: CardTheme(
-      color: Colors.teal,
-    ),
   );
 
   static final lightTheme = ThemeData(

@@ -4,27 +4,33 @@ import 'package:instsinfu/Models/profile_model.dart';
 import 'package:http/http.dart' as http;
 
 class InstaProfileProvider with ChangeNotifier {
+  int startingRow = 1;
   List<ProfileModel> _instaUserList = [];
-  int _startingRow = 1;
+
   bool _isLast = false;
 
-  Future<void> fetchData() async {
+  Future<void> fetchData({int currentRowNo}) async {
+    if (startingRow == 1) {
+      startingRow = currentRowNo;
+    }
+
     final url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbzrYBl5982gjLUgwcVV12UKPsOKCUSRinySgghK7yfBz6_a1SDM/exec?id=$_startingRow");
+        "https://script.google.com/macros/s/AKfycbzrYBl5982gjLUgwcVV12UKPsOKCUSRinySgghK7yfBz6_a1SDM/exec?id=$startingRow");
 
     final response = await http.get(url);
-    final _result = json.decode(response.body);
-
+    final _result = await json.decode(response.body);
     if (response.statusCode == 200) {
+      print("Avnish............................");
+
       final _tempList =
-          _result.toList().map((json) => ProfileModel.fromJson(json)).toList();
+          _result.map((json) => ProfileModel.fromJson(json)).toList();
 
       _instaUserList.addAll(List<ProfileModel>.from(_tempList));
-      print(_instaUserList.length);
+      print(_instaUserList.toList().length);
 
       _isLast = _tempList.length < 19;
 
-      _startingRow = _instaUserList[_instaUserList.length - 1].currentNo;
+      startingRow = _instaUserList[_instaUserList.length - 1].currentNo;
 
       notifyListeners();
     } else {

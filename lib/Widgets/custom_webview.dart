@@ -35,16 +35,31 @@ class _CustomWebViewState extends State<CustomWebView> {
         onPageFinished: (s) {
           // if (widget.flag != null)
           try {
-            _webViewController.evaluateJavascript("javascript:(function() { " +
-                // "document.getElementsByTagName('nav')[0].style.display='none';" +
-                //"document.getElementsByClassName(' ffKix ')[0].style.display='none';" +
-                "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+            if (widget.flag == 1)
+              _webViewController.evaluateJavascript("javascript:(function() { " +
 
-                ///remove bottom navigation
-                "document.getElementsByClassName('Z_Gl2')[0].style.display='none';" +
+                  ///remove bottom navigation
 
-                ///remove use the app
-                "})()");
+                  "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+
+                  ///remove use the app
+
+                  "document.getElementsByClassName('Z_Gl2')[0].style.display='none';" +
+
+                  // remove the back button
+                  "document.getElementsByClassName('mXkkY HOQT4')[0].style.display='none';" +
+                  "})()");
+            else
+              _webViewController.evaluateJavascript("javascript:(function() { " +
+
+                  ///remove bottom navigation
+
+                  "document.getElementsByClassName('KGiwt')[0].style.display='none';" +
+
+                  ///remove use the app
+
+                  "document.getElementsByClassName('Z_Gl2')[0].style.display='none';" +
+                  "})()");
           } catch (e) {
             debugPrint('$e');
           }

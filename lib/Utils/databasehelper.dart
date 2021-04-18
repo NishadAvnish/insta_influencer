@@ -21,7 +21,6 @@ class DatabaseHelper {
   String colUserName = "userName";
   String colRating = "rating";
   bool isConvrtCSV = true;
-
   Future<Database> get database async {
     if (_database != null) {
       return _database;
@@ -32,7 +31,6 @@ class DatabaseHelper {
 
   initDatabase() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    print(directory.path);
     String path = join(directory.path, "Insta_Influncer.db");
     var db = await openDatabase(path, version: 1, onCreate: _onCreate);
     return db;

@@ -18,7 +18,6 @@ class LoadCsvDataScreen extends StatelessWidget {
       body: FutureBuilder(
         future: loadingCsvData(path),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          print(snapshot.data.toString());
           return snapshot.hasData
               ? Padding(
                   padding: const EdgeInsets.all(8.0),

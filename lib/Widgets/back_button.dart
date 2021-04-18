@@ -1,6 +1,8 @@
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> onBackPressed(BuildContext context) async {
+  Cron().close();
   return showDialog(
     context: context,
     builder: (context) => new AlertDialog(

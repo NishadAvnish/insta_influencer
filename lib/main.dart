@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:instsinfu/Models/profile_model.dart';
+import 'package:instsinfu/Providers/logined_current_provider.dart';
 import 'package:instsinfu/Utils/routes.dart';
 import 'package:instsinfu/Utils/theme_helper.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +26,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _sharedPreference();
     return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: InstaProfileProvider())],
+      providers: [
+        ChangeNotifierProvider.value(value: LoginCurrentNoProvider()),
+        ChangeNotifierProvider.value(value: InstaProfileProvider()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         themeMode: ThemeMode.system,

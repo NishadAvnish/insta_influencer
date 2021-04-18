@@ -24,14 +24,7 @@ class _SecondScreenState extends State<SecondScreen> {
     super.initState();
     if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     databasehelper = DatabaseHelper();
-    // fetchData();
   }
-
-  // fetchData() {
-  //   setState(() {
-  //     databasehelper.getTrans(rating: _currentGridIndex);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +43,6 @@ class _SecondScreenState extends State<SecondScreen> {
                       "/storage/emulated/0/InstaInflucerCSV";
                   // (await getApplicationDocumentsDirectory()).path;
                   final path = "$directory/csv-${DateTime.now()}.csv";
-                  print(path);
                   final File file = File(path);
                   await file.writeAsString(csvData);
                   Navigator.of(context).push(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Providers/currentindex_notifier.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
+import 'package:instsinfu/Providers/logined_current_provider.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
 import 'package:provider/provider.dart';
 
@@ -107,10 +108,15 @@ class RatingBarWidget extends StatelessWidget {
   }
 
   void _onButtonClickNextPage(int rating, BuildContext context) {
-    _pageController.nextPage(
-        duration: Duration(milliseconds: 1), curve: Curves.easeIn);
     final _templist = Provider.of<InstaProfileProvider>(context, listen: false)
         .instaUserList[currentIndexValue.value];
+
+    //save currentIndex at every button click
+    Provider.of<LoginCurrentNoProvider>(context, listen: false)
+        .changeCurrentStatus(isLogin: true);
+
+    _pageController.nextPage(
+        duration: Duration(milliseconds: 50), curve: Curves.easeIn);
 
     databasehelper.addTransToDatabase(
         // Provider.of<InstaProfileProvider>(context, listen: false)
@@ -125,13 +131,9 @@ class RatingBarWidget extends StatelessWidget {
           "engrate": _templist.engrate,
           "avgLike": _templist.avgLike,
           "rating": rating,
-        }).then((value) {
-      final snackBar = SnackBar(content: Text('Saved to database'));
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }).catchError((error) {
+        }).catchError((error) {
       final snackBar =
-          SnackBar(content: Text('Can\'t save : sOmething went wrong1'));
+          SnackBar(content: Text('Can\'t save : Something went wrong'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     });
   }
