@@ -118,20 +118,16 @@ class RatingBarWidget extends StatelessWidget {
     _pageController.nextPage(
         duration: Duration(milliseconds: 50), curve: Curves.easeIn);
 
-    databasehelper.addTransToDatabase(
-        // Provider.of<InstaProfileProvider>(context, listen: false)
-        //     .instaUserList[currentIndexValue.value]
-
-        <String, dynamic>{
-          "userName": _templist.userName,
-          "userid": _templist.userid,
-          "userProfilelink": _templist.userProfilelink,
-          "email": _templist.email,
-          "category": _templist.category,
-          "engrate": _templist.engrate,
-          "avgLike": _templist.avgLike,
-          "rating": rating,
-        }).catchError((error) {
+    databasehelper.addTransToDatabase(<String, dynamic>{
+      "userName": _templist.userName,
+      "userid": _templist.userid,
+      "userProfilelink": _templist.userProfilelink,
+      "email": _templist.email,
+      "category": _templist.category,
+      "engrate": _templist.engrate,
+      "avgLike": _templist.avgLike,
+      "rating": rating,
+    }).catchError((error) {
       final snackBar =
           SnackBar(content: Text('Can\'t save : Something went wrong'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

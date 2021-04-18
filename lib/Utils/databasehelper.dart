@@ -48,14 +48,15 @@ class DatabaseHelper {
   Future<List<ProfileModel>> getTrans({int rating}) async {
     var dbClient = await database;
     String instaTable;
+
     if (rating == 1) {
       instaTable = instaTable_1;
     } else if (rating == 2) {
       instaTable = instaTable_2;
-    } else
-      instaTable = instaTable_3;
+    } else if (rating == 3) instaTable = instaTable_3;
 
     final List<Map<String, dynamic>> maps = await dbClient.query(instaTable);
+
     return List.generate(maps.length, (i) {
       return ProfileModel(
           userName: maps[i]["userName"],
