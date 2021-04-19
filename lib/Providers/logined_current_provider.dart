@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:instsinfu/Models/login_current_model.dart';
@@ -50,7 +49,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
 
     http.get(_url).then((value) {
       if (!isLogin) {
-        Cron().close();
+        cron.close();
         _loginCurrentdata = LoginCurrentModel(
             currentNo: _loginCurrentdata.currentNo,
             isLogin: false,

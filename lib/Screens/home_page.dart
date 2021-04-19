@@ -71,10 +71,7 @@ class _HomePageState extends State<HomePage> {
       if (isLogin.value)
 
         //start periodic timer to call api every time
-        Cron().schedule(Schedule.parse('*/2 * * * *'), () async {
-          Provider.of<LoginCurrentNoProvider>(context, listen: false)
-              .changeCurrentStatus(isLogin: true);
-        });
+        startCron(context);
     }
   }
 

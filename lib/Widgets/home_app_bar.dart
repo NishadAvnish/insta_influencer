@@ -1,4 +1,3 @@
-import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Providers/notifier_provider.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
