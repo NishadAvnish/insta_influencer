@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
-import 'package:instsinfu/Providers/currentindex_notifier.dart';
+import 'package:instsinfu/Providers/notifier_provider.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
 import 'package:instsinfu/Providers/logined_current_provider.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
@@ -20,13 +20,13 @@ class _HomePageState extends State<HomePage> {
   DatabaseHelper databasehelper;
   PageController _pageController;
   bool _isLoading;
-  bool _isLogin;
+
   LoginCurrentNoProvider _loginProvider;
   @override
   void initState() {
     super.initState();
     databasehelper = DatabaseHelper();
-    _isLogin = false;
+
     _pageController = PageController(initialPage: currentIndexValue.value);
 
     if (!mounted) return;
@@ -46,13 +46,13 @@ class _HomePageState extends State<HomePage> {
   Future<void> _refresh() async {
     await Provider.of<LoginCurrentNoProvider>(context, listen: false)
         .fetchLoginData();
-    if (!_isLogin) {
+    if (!isLogin.value) {
       if (_loginProvider.loginCurrentdata.isLogin == false ||
           _loginProvider.loginCurrentdata.isLogin == true &&
               DateTime.now()
                       .difference(_loginProvider.loginCurrentdata.dateTime)
                       .inMinutes >=
-                  4) {
+                  2.10) {
         final _provider =
             Provider.of<InstaProfileProvider>(context, listen: false);
 
@@ -62,18 +62,16 @@ class _HomePageState extends State<HomePage> {
           await _provider.fetchData(
               currentRowNo: _loginProvider.loginCurrentdata.currentNo.toInt());
         }
-        setState(() {
-          _isLogin = true;
-        });
+        isLogin.value = true;
       }
       setState(() {
         _isLoading = false;
       });
 
-      if (_isLogin)
+      if (isLogin.value)
 
         //start periodic timer to call api every time
-        Cron().schedule(Schedule.parse('*/3 * * * *'), () async {
+        Cron().schedule(Schedule.parse('*/2 * * * *'), () async {
           Provider.of<LoginCurrentNoProvider>(context, listen: false)
               .changeCurrentStatus(isLogin: true);
         });
@@ -108,90 +106,113 @@ class _HomePageState extends State<HomePage> {
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : Container(
-                  width: _size.width,
-                  height: _size.height,
-                  child: Column(
-                    children: [
-                      HomeAppBar(
-                        isLogin:
-                            _isLogin && _loginProvider.loginCurrentdata.isLogin,
-                      ),
-                      RefreshIndicator(
-                        onRefresh: () => _refresh(),
-                        child: SingleChildScrollView(
-                          physics: AlwaysScrollableScrollPhysics(),
-                          child: Container(
-                            width: _size.width,
-                            height: _size.height -
-                                kToolbarHeight -
-                                MediaQuery.of(context).padding.top -
-                                MediaQuery.of(context).padding.bottom,
-                            constraints: BoxConstraints(minHeight: 150),
-                            child: Stack(children: [
-                              Positioned.fill(
-                                child: _isLogin &&
-                                        _loginProvider.loginCurrentdata.isLogin
-                                    ? Consumer<InstaProfileProvider>(builder:
-                                        (context, homeProvider, child) {
-                                        return PageView.builder(
-                                            controller: _pageController,
-                                            onPageChanged: (index) {
-                                              currentIndexValue.value = index;
-                                              if (index ==
-                                                  homeProvider.instaUserList
-                                                          .length -
-                                                      6) {
-                                                _fetchMore();
-                                              }
-                                            },
-                                            itemCount: homeProvider
-                                                .instaUserList.length,
-                                            itemBuilder: (context, index) {
-                                              return CustomWebView(
-                                                  initialUrl: homeProvider
-                                                      .instaUserList[index]
-                                                      .userProfilelink);
-                                            });
-                                      })
-                                    : Center(
-                                        child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                            text:
-                                                "Another Session is in Active State\n",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline5
-                                                .copyWith(color: Colors.grey),
-                                            children: [
-                                              TextSpan(
-                                                  text: "Pull Down To Refresh!",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .button
-                                                      .copyWith(
-                                                          color: Colors.grey)),
-                                            ]),
-                                      )),
+              : MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: ValueListenableBuilder(
+                      valueListenable: isLogin,
+                      builder: (context, isLoginValue, _) {
+                        return Container(
+                          width: _size.width,
+                          height: _size.height,
+                          child: Column(
+                            children: [
+                              HomeAppBar(
+                                isCurrentlyLogin: isLoginValue &&
+                                    _loginProvider.loginCurrentdata.isLogin,
                               ),
-                              _isLogin &&
-                                      _loginProvider.loginCurrentdata.isLogin
-                                  ? Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: RatingBarWidget(
-                                          databasehelper: databasehelper,
-                                          pageController: _pageController),
-                                    )
-                                  : Container(),
-                            ]),
+                              RefreshIndicator(
+                                onRefresh: () => _refresh(),
+                                child: SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  child: Container(
+                                    width: _size.width,
+                                    height: _size.height -
+                                        kToolbarHeight -
+                                        MediaQuery.of(context).padding.top -
+                                        MediaQuery.of(context).padding.bottom,
+                                    constraints: BoxConstraints(minHeight: 150),
+                                    child: Stack(children: [
+                                      Positioned.fill(
+                                        child: isLoginValue &&
+                                                _loginProvider
+                                                    .loginCurrentdata.isLogin
+                                            ? Consumer<InstaProfileProvider>(
+                                                builder: (context, homeProvider,
+                                                    child) {
+                                                return PageView.builder(
+                                                    controller: _pageController,
+                                                    onPageChanged: (index) {
+                                                      currentIndexValue.value =
+                                                          index;
+                                                      if (index ==
+                                                          homeProvider
+                                                                  .instaUserList
+                                                                  .length -
+                                                              6) {
+                                                        _fetchMore();
+                                                      }
+                                                    },
+                                                    itemCount: homeProvider
+                                                        .instaUserList.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return CustomWebView(
+                                                          initialUrl: homeProvider
+                                                              .instaUserList[
+                                                                  index]
+                                                              .userProfilelink);
+                                                    });
+                                              })
+                                            : Center(
+                                                child: RichText(
+                                                textAlign: TextAlign.center,
+                                                text: TextSpan(
+                                                    text:
+                                                        "Another Session is in Active State\n",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline5
+                                                        .copyWith(
+                                                            color: Colors.grey),
+                                                    children: [
+                                                      TextSpan(
+                                                          text:
+                                                              "Pull Down To Refresh!",
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .button
+                                                              .copyWith(
+                                                                  color: Colors
+                                                                      .grey)),
+                                                    ]),
+                                              )),
+                                      ),
+                                      isLoginValue &&
+                                              _loginProvider
+                                                  .loginCurrentdata.isLogin
+                                          ? Positioned(
+                                              bottom: MediaQuery.of(context)
+                                                  .padding
+                                                  .bottom,
+                                              left: 0,
+                                              right: 0,
+                                              child: RatingBarWidget(
+                                                  databasehelper:
+                                                      databasehelper,
+                                                  pageController:
+                                                      _pageController),
+                                            )
+                                          : Container(),
+                                    ]),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        ),
-                      )
-                    ],
-                  ),
+                        );
+                      }),
                 ),
         ),
       ),

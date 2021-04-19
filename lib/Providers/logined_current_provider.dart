@@ -3,7 +3,7 @@ import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:instsinfu/Models/login_current_model.dart';
-import 'package:instsinfu/Providers/currentindex_notifier.dart';
+import 'package:instsinfu/Providers/notifier_provider.dart';
 
 class LoginCurrentNoProvider with ChangeNotifier {
   int _count = 0;

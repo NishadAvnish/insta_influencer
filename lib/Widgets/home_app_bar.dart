@@ -1,13 +1,13 @@
 import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
-import 'package:instsinfu/Providers/currentindex_notifier.dart';
+import 'package:instsinfu/Providers/notifier_provider.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
 import 'package:instsinfu/Providers/logined_current_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeAppBar extends StatelessWidget {
-  bool isLogin;
-  HomeAppBar({Key key, this.isLogin}) : super(key: key);
+  bool isCurrentlyLogin;
+  HomeAppBar({Key key, this.isCurrentlyLogin}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +24,20 @@ class HomeAppBar extends StatelessWidget {
               children: [
                 Flexible(
                   flex: 1,
-                  child: isLogin
+                  child: isCurrentlyLogin
                       ? IconButton(
                           icon: Icon(Icons.logout),
                           onPressed: () {
                             Provider.of<LoginCurrentNoProvider>(context,
                                     listen: false)
                                 .changeCurrentStatus(isLogin: false);
+                            isLogin.value = false;
                           })
                       : Container(),
                 ),
                 Flexible(
                   flex: 6,
-                  child: isLogin
+                  child: isCurrentlyLogin
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
