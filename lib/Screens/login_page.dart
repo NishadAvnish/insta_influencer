@@ -87,12 +87,22 @@ class _loginPageState extends State<LoginPage> {
   }
 
   Future<void> _askForPermission() async {
-    Map<Permission, PermissionStatus> statuses =
-        await [Permission.storage].request();
-    if (statuses[Permission.storage] == PermissionStatus.granted) {
-      setState(() {});
-    } else {
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    if (Platform.isAndroid) {
+      Map<Permission, PermissionStatus> statuses =
+          await [Permission.storage].request();
+      if (statuses[Permission.storage] == PermissionStatus.granted) {
+        setState(() {});
+      } else {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      }
+    } else if (Platform.isIOS) {
+      Map<Permission, PermissionStatus> statuses =
+          await [Permission.photos].request();
+      if (statuses[Permission.photos] == PermissionStatus.granted) {
+        setState(() {});
+      } else {
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      }
     }
   }
 }

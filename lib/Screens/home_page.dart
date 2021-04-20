@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
               DateTime.now()
                       .difference(_loginProvider.loginCurrentdata.dateTime)
                       .inMinutes >=
-                  2.10) {
+                  2.50) {
         final _provider =
             Provider.of<InstaProfileProvider>(context, listen: false);
 
