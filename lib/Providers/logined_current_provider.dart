@@ -44,8 +44,15 @@ class LoginCurrentNoProvider with ChangeNotifier {
   }
 
   Future<void> changeCurrentStatus({bool isLogin}) {
+    // isLogin = false logout button clicked
+    var _current;
+    if (isLogin) {
+      _current = _loginCurrentdata.currentNo + currentIndexValue.value + 1;
+    } else {
+      _current = _loginCurrentdata.currentNo + currentIndexValue.value;
+    }
     var _url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbzMFBsat-s6Im7nn8PMS94056uAFi-Oy26CYn5o430LfB26qh8x/exec?current=${_loginCurrentdata.currentNo + currentIndexValue.value}&islogin=${isLogin}&datetime=${DateTime.now()}");
+        "https://script.google.com/macros/s/AKfycbzMFBsat-s6Im7nn8PMS94056uAFi-Oy26CYn5o430LfB26qh8x/exec?current=${_current}&islogin=${isLogin}&datetime=${DateTime.now()}");
 
     http.get(_url).then((value) {
       if (!isLogin) {
