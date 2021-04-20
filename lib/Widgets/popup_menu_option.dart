@@ -3,6 +3,7 @@ import 'package:path/path.dart' as path;
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Utils/databasehelper.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum MenuOption { Export1, Export2, Export3, ExportAll }
 
@@ -24,22 +25,33 @@ class CustomPopUpMenu extends StatelessWidget {
         data.addAll(data2);
       }
 
-      String csvData = ListToCsvConverter().convert(data);
-      final _fileName = "$rating star-${DateTime.now()}.csv";
-      Directory _dir = Directory("storage/emulated/0/InstaInflucerCSV");
+      if (data.length > 0) {
+        String csvData = ListToCsvConverter().convert(data);
+        final _fileName =
+            "${rating}star ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().millisecond}.csv";
 
-      if (!_dir.existsSync()) {
-        _dir = await _dir.create(recursive: true);
+        Directory _dir = await getApplicationDocumentsDirectory();
+        print(_dir);
+        // _dir = Directory("$_dir/InstaInflucerCSV");
+
+        if (!_dir.existsSync()) {
+          _dir = await _dir.create(recursive: true);
+        }
+
+        await File(Directory(path.join(_dir.path, _fileName)).path)
+            .writeAsString(csvData);
+
+        final snackBar =
+            SnackBar(content: Text('File saved to InstaInflucerCSV'));
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final snackBar = SnackBar(content: Text('No data Present to Export!'));
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
-
-      await File(Directory(path.join(_dir.path, _fileName)).path)
-          .writeAsString(csvData);
-
-      final snackBar =
-          SnackBar(content: Text('File saved to InstaInflucerCSV'));
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } catch (e) {
+      print(e);
       final snackBar =
           SnackBar(content: Text('Can\'t save : Something went wrong'));
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

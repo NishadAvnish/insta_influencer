@@ -33,7 +33,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
       _loginCurrentdata = LoginCurrentModel(
           currentNo: _result[0]["currentNo"],
           isLogin: _result[0]["isLogin"],
-          dateTime: DateTime.parse(_result[0]["dateTime"]));
+          dateTime: _result[0]["dateTime"]);
       _currentRowNo = _result[0]["currentNo"];
       _count = 1;
 

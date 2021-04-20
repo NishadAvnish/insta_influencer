@@ -50,7 +50,8 @@ class _HomePageState extends State<HomePage> {
       if (_loginProvider.loginCurrentdata.isLogin == false ||
           _loginProvider.loginCurrentdata.isLogin == true &&
               DateTime.now()
-                      .difference(_loginProvider.loginCurrentdata.dateTime)
+                      .difference(DateTime.parse(
+                          _loginProvider.loginCurrentdata.dateTime))
                       .inMinutes >=
                   2.50) {
         final _provider =

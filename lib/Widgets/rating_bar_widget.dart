@@ -43,8 +43,6 @@ class RatingBarWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
                   "Assets/Images/1star.gif",
-                  // height: 40,
-                  // width: 40,
                 ),
               ),
             ),

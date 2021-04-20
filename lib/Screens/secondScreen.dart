@@ -32,6 +32,10 @@ class _SecondScreenState extends State<SecondScreen> {
           centerTitle: true,
           actions: [CustomPopUpMenu()],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.of(context).pushNamed("/savedcsvscreen"),
+          child: Icon(Icons.save),
+        ),
         body: Column(
           children: [
             Container(

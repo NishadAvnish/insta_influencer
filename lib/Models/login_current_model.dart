@@ -1,7 +1,7 @@
 class LoginCurrentModel {
   final int currentNo;
   final bool isLogin;
-  final DateTime dateTime;
+  final String dateTime;
 
   LoginCurrentModel({this.currentNo, this.isLogin = false, this.dateTime});
 
