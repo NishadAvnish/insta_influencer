@@ -130,10 +130,10 @@ class _SavedCSVFilesState extends State<SavedCSVFiles> {
                       padding: const EdgeInsets.all(8.0),
                       child: GridView.builder(
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 165,
+                            maxCrossAxisExtent: 175,
                             mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 3 / 5),
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 3.2 / 4.3),
                         itemBuilder: (context, index) {
                           final _splitList =
                               _itemList[index].toString().split("/");
@@ -145,25 +145,21 @@ class _SavedCSVFilesState extends State<SavedCSVFiles> {
                                 : () => Navigator.of(context).pushNamed(
                                     "/loadCsvFile",
                                     arguments: _itemList[index].path),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
+                            child: Card(
+                              elevation: 2.0,
+                              child: Column(
+                                children: [
+                                  Expanded(
                                     child: Stack(
                                       children: [
                                         Positioned.fill(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                border: Border.all(width: 1),
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0)),
+                                              color: Colors.transparent,
+                                            ),
                                             child: Center(
                                                 child: Opacity(
-                                              opacity: 0.3,
+                                              opacity: 0.6,
                                               child: Image.asset(
                                                 "Assets/Images/csv.png",
                                                 height: 50,
@@ -197,15 +193,22 @@ class _SavedCSVFilesState extends State<SavedCSVFiles> {
                                       ],
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                    height: 45,
-                                    child: Card(
-                                      elevation: 0.0,
-                                      color: Colors.grey.withOpacity(0.7),
-                                      child: Center(child: Text(_fileName)),
-                                    ))
-                              ],
+                                  SizedBox(
+                                      height: 50,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6.0, vertical: 3.0),
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Text(_fileName,
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1),
+                                        ),
+                                      ))
+                                ],
+                              ),
                             ),
                           );
                         },
