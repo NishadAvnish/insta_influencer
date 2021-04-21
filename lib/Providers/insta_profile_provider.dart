@@ -15,7 +15,7 @@ class InstaProfileProvider with ChangeNotifier {
     }
 
     final url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbzrYBl5982gjLUgwcVV12UKPsOKCUSRinySgghK7yfBz6_a1SDM/exec?id=$startingRow");
+        "https://script.google.com/macros/s/AKfycbwZFw2For7VfT45xpJ1EhzGuJ3K36PWY6cjL0-WNWOseErqJdi4s_nYGeEQI5luetYP/exec?id=$startingRow");
 
     final response = await http.get(url);
     final _result = await json.decode(response.body);
