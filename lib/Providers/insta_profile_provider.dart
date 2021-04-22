@@ -15,25 +15,25 @@ class InstaProfileProvider with ChangeNotifier {
     if (startingRow == 1) {
       startingRow = currentRowNo;
     }
+    try {
+      final url = Uri.parse("$_mainSheetDataUrl?id=$startingRow");
 
-    final url = Uri.parse("$_mainSheetDataUrl?id=$startingRow");
+      final response = await http.get(url);
+      final _result = await json.decode(response.body);
+      if (response.statusCode == 200) {
+        final _tempList =
+            _result.map((json) => ProfileModel.fromJson(json)).toList();
 
-    final response = await http.get(url);
-    final _result = await json.decode(response.body);
-    if (response.statusCode == 200) {
-      final _tempList =
-          _result.map((json) => ProfileModel.fromJson(json)).toList();
+        _instaUserList.addAll(List<ProfileModel>.from(_tempList));
 
-      _instaUserList.addAll(List<ProfileModel>.from(_tempList));
-      print(_instaUserList.length);
+        _isLast = _tempList.length < 19;
 
-      _isLast = _tempList.length < 19;
+        startingRow = _instaUserList[_instaUserList.length - 1].currentNo;
 
-      startingRow = _instaUserList[_instaUserList.length - 1].currentNo;
-
-      notifyListeners();
-    } else {
-      throw Exception('Failed to load album');
+        notifyListeners();
+      }
+    } catch (e) {
+      throw e;
     }
   }
 

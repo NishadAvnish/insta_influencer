@@ -115,56 +115,43 @@ class _HomePageState extends State<HomePage> {
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : _errorText != ""
-                  ? Center(
-                      child: Text(
-                        _errorText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            .copyWith(color: Colors.grey),
-                      ),
-                    )
-                  : MediaQuery.removePadding(
-                      context: context,
-                      removeBottom: true,
-                      child: ValueListenableBuilder(
-                          valueListenable: isLogin,
-                          builder: (context, isLoginValue, _) {
-                            return Container(
-                              width: _size.width,
-                              height: _size.height,
-                              child: Column(
-                                children: [
-                                  HomeAppBar(
-                                    isCurrentlyLogin: isLoginValue &&
-                                        _loginProvider.currentLoginInfo.isLogin,
-                                  ),
-                                  RefreshIndicator(
-                                    onRefresh: () => _refresh(),
-                                    child: SingleChildScrollView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      child: Container(
-                                        width: _size.width,
-                                        height: _size.height -
-                                            kToolbarHeight -
-                                            MediaQuery.of(context).padding.top -
-                                            MediaQuery.of(context)
-                                                .padding
-                                                .bottom,
-                                        constraints:
-                                            BoxConstraints(minHeight: 150),
-                                        child: Stack(
-                                            children:
-                                                _homePageMainUI(isLoginValue)),
-                                      ),
-                                    ),
-                                  )
-                                ],
+              : MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: true,
+                  child: ValueListenableBuilder(
+                      valueListenable: isLogin,
+                      builder: (context, isLoginValue, _) {
+                        return Container(
+                          width: _size.width,
+                          height: _size.height,
+                          child: Column(
+                            children: [
+                              HomeAppBar(
+                                isCurrentlyLogin: isLoginValue &&
+                                    _loginProvider.currentLoginInfo.isLogin,
                               ),
-                            );
-                          }),
-                    ),
+                              RefreshIndicator(
+                                onRefresh: () => _refresh(),
+                                child: SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  child: Container(
+                                    width: _size.width,
+                                    height: _size.height -
+                                        kToolbarHeight -
+                                        MediaQuery.of(context).padding.top -
+                                        MediaQuery.of(context).padding.bottom,
+                                    constraints: BoxConstraints(minHeight: 150),
+                                    child: Stack(
+                                        children:
+                                            _homePageMainUI(isLoginValue)),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      }),
+                ),
         ),
       ),
     );
@@ -191,24 +178,38 @@ class _HomePageState extends State<HomePage> {
                               .instaUserList[index].userProfilelink);
                     });
               })
-            : Center(
-                child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                    text: "Another Session is in Active State\n",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Colors.grey),
-                    children: [
-                      TextSpan(
-                          text: "Pull Down To Refresh!",
-                          style: Theme.of(context)
-                              .textTheme
-                              .button
-                              .copyWith(color: Colors.grey)),
-                    ]),
-              )),
+            : _errorText != ""
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        _errorText,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            .copyWith(color: Colors.grey),
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                        text: "Another Session is in Active State\n",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            .copyWith(color: Colors.grey),
+                        children: [
+                          TextSpan(
+                              text: "Pull Down To Refresh!",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .button
+                                  .copyWith(color: Colors.grey)),
+                        ]),
+                  )),
       ),
       isLoginValue && _loginProvider.currentLoginInfo.isLogin
           ? Positioned(
