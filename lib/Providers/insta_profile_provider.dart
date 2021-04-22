@@ -8,14 +8,15 @@ class InstaProfileProvider with ChangeNotifier {
   List<ProfileModel> _instaUserList = [];
 
   bool _isLast = false;
+  String _mainSheetDataUrl =
+      "https://script.google.com/macros/s/AKfycbwZFw2For7VfT45xpJ1EhzGuJ3K36PWY6cjL0-WNWOseErqJdi4s_nYGeEQI5luetYP/exec";
 
   Future<void> fetchMainSheetData({int currentRowNo}) async {
     if (startingRow == 1) {
       startingRow = currentRowNo;
     }
 
-    final url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbwZFw2For7VfT45xpJ1EhzGuJ3K36PWY6cjL0-WNWOseErqJdi4s_nYGeEQI5luetYP/exec?id=$startingRow");
+    final url = Uri.parse("$_mainSheetDataUrl?id=$startingRow");
 
     final response = await http.get(url);
     final _result = await json.decode(response.body);

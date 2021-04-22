@@ -10,6 +10,12 @@ class LoginCurrentNoProvider with ChangeNotifier {
 
   int _currentRowNo = 1;
 
+  String _fetchLoginDataUrl =
+      "https://script.google.com/macros/s/AKfycbzx4BK_VgUPqLrZ0Ki87HOvtL9_yRQIOab0iJokvf02OqHbLb5OyZNdebDoVDNHql-m/exec";
+
+  String _loginUrl =
+      "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec";
+
   int get currentRowNo {
     return _currentRowNo;
   }
@@ -23,8 +29,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
   }
 
   Future<bool> fetchLoginData() async {
-    final url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbzx4BK_VgUPqLrZ0Ki87HOvtL9_yRQIOab0iJokvf02OqHbLb5OyZNdebDoVDNHql-m/exec");
+    final url = Uri.parse("$_fetchLoginDataUrl");
 
     final response = await http.get(url);
     final _result = json.decode(response.body);
@@ -54,7 +59,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
       _current = _currentLoginInfo.currentNo + currentIndexValue.value;
     }
     var _url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec?current=${_current}&islogin=${isLogin}&datetime=${DateTime.now()}");
+        "$_loginUrl?current=${_current}&islogin=${isLogin}&datetime=${DateTime.now()}");
 
     http.get(_url).then((value) {
       if (!isLogin) {
@@ -74,7 +79,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
   Future<void> login() {
     var _url;
     _url = Uri.parse(
-        "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec?current=${currentLoginInfo.currentNo + currentIndexValue.value}&islogin=${true}&datetime=${DateTime.now()}");
+        "$_loginUrl?current=${currentLoginInfo.currentNo + currentIndexValue.value}&islogin=${true}&datetime=${DateTime.now()}");
 
     http.get(_url).then((value) {
       _currentLoginInfo = LoginCurrentModel(
