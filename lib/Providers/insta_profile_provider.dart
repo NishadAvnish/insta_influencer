@@ -9,7 +9,7 @@ class InstaProfileProvider with ChangeNotifier {
 
   bool _isLast = false;
 
-  Future<void> fetchData({int currentRowNo}) async {
+  Future<void> fetchMainSheetData({int currentRowNo}) async {
     if (startingRow == 1) {
       startingRow = currentRowNo;
     }

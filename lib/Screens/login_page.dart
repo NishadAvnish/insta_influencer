@@ -22,7 +22,7 @@ class _loginPageState extends State<LoginPage> {
 
     super.initState();
 
-    _checkPermissionStatus();
+    // _checkPermissionStatus();
   }
 
   @override

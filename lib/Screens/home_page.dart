@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:instsinfu/Providers/notifier_provider.dart';
 import 'package:instsinfu/Providers/insta_profile_provider.dart';
@@ -30,10 +29,10 @@ class _HomePageState extends State<HomePage> {
     _pageController = PageController(initialPage: currentIndexValue.value);
 
     if (!mounted) return;
-    _fetch();
+    _fetchMainSheetdata();
   }
 
-  Future<void> _fetch() async {
+  Future<void> _fetchMainSheetdata() async {
     _loginProvider =
         Provider.of<LoginCurrentNoProvider>(context, listen: false);
     _isLoading = true;
@@ -47,11 +46,11 @@ class _HomePageState extends State<HomePage> {
     await Provider.of<LoginCurrentNoProvider>(context, listen: false)
         .fetchLoginData();
     if (!isLogin.value) {
-      if (_loginProvider.loginCurrentdata.isLogin == false ||
-          _loginProvider.loginCurrentdata.isLogin == true &&
+      if (_loginProvider.currentLoginInfo.isLogin == false ||
+          _loginProvider.currentLoginInfo.isLogin == true &&
               DateTime.now()
                       .difference(DateTime.parse(
-                          _loginProvider.loginCurrentdata.dateTime))
+                          _loginProvider.currentLoginInfo.dateTime))
                       .inMinutes >=
                   2.50) {
         final _provider =
@@ -60,29 +59,32 @@ class _HomePageState extends State<HomePage> {
         _loginProvider.login(); // to change the current status of loginData.
 
         if (_provider.islast == false) {
-          await _provider.fetchData(
-              currentRowNo: _loginProvider.loginCurrentdata.currentNo.toInt());
+          await _provider.fetchMainSheetData(
+              currentRowNo: _loginProvider.currentLoginInfo.currentNo.toInt());
         }
         isLogin.value = true;
       }
-      setState(() {
-        _isLoading = false;
-      });
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
 
       if (isLogin.value)
 
-        //start periodic timer to call api every time
+        //start periodic timer to call api at every 2 minute time if user logined
         startCron(context);
     }
   }
 
-  Future<void> _fetchMore() async {
+  Future<void> _fetchMoreMainSheet() async {
     final _loginProvider =
         Provider.of<LoginCurrentNoProvider>(context, listen: false);
     final _provider = Provider.of<InstaProfileProvider>(context, listen: false);
     if (_provider.islast == false) {
-      await _provider.fetchData(
-          currentRowNo: _loginProvider.loginCurrentdata.currentNo.toInt());
+      await _provider.fetchMainSheetData(
+          currentRowNo: _loginProvider.currentLoginInfo.currentNo.toInt());
     }
   }
 
@@ -100,6 +102,7 @@ class _HomePageState extends State<HomePage> {
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
         child: SafeArea(
+          bottom: false,
           child: _isLoading
               ? Center(
                   child: CircularProgressIndicator(),
@@ -117,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               HomeAppBar(
                                 isCurrentlyLogin: isLoginValue &&
-                                    _loginProvider.loginCurrentdata.isLogin,
+                                    _loginProvider.currentLoginInfo.isLogin,
                               ),
                               RefreshIndicator(
                                 onRefresh: () => _refresh(),
@@ -130,80 +133,9 @@ class _HomePageState extends State<HomePage> {
                                         MediaQuery.of(context).padding.top -
                                         MediaQuery.of(context).padding.bottom,
                                     constraints: BoxConstraints(minHeight: 150),
-                                    child: Stack(children: [
-                                      Positioned.fill(
-                                        child: isLoginValue &&
-                                                _loginProvider
-                                                    .loginCurrentdata.isLogin
-                                            ? Consumer<InstaProfileProvider>(
-                                                builder: (context, homeProvider,
-                                                    child) {
-                                                return PageView.builder(
-                                                    controller: _pageController,
-                                                    onPageChanged: (index) {
-                                                      currentIndexValue.value =
-                                                          index;
-                                                      if (index ==
-                                                          homeProvider
-                                                                  .instaUserList
-                                                                  .length -
-                                                              6) {
-                                                        _fetchMore();
-                                                      }
-                                                    },
-                                                    itemCount: homeProvider
-                                                        .instaUserList.length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return CustomWebView(
-                                                          initialUrl: homeProvider
-                                                              .instaUserList[
-                                                                  index]
-                                                              .userProfilelink);
-                                                    });
-                                              })
-                                            : Center(
-                                                child: RichText(
-                                                textAlign: TextAlign.center,
-                                                text: TextSpan(
-                                                    text:
-                                                        "Another Session is in Active State\n",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline5
-                                                        .copyWith(
-                                                            color: Colors.grey),
-                                                    children: [
-                                                      TextSpan(
-                                                          text:
-                                                              "Pull Down To Refresh!",
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .button
-                                                              .copyWith(
-                                                                  color: Colors
-                                                                      .grey)),
-                                                    ]),
-                                              )),
-                                      ),
-                                      isLoginValue &&
-                                              _loginProvider
-                                                  .loginCurrentdata.isLogin
-                                          ? Positioned(
-                                              bottom: MediaQuery.of(context)
-                                                  .padding
-                                                  .bottom,
-                                              left: 0,
-                                              right: 0,
-                                              child: RatingBarWidget(
-                                                  databasehelper:
-                                                      databasehelper,
-                                                  pageController:
-                                                      _pageController),
-                                            )
-                                          : Container(),
-                                    ]),
+                                    child: Stack(
+                                        children:
+                                            _homePageMainUI(isLoginValue)),
                                   ),
                                 ),
                               )
@@ -215,5 +147,58 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  List<Widget> _homePageMainUI(bool isLoginValue) {
+    return [
+      Positioned.fill(
+        child: isLoginValue && _loginProvider.currentLoginInfo.isLogin
+            ? Consumer<InstaProfileProvider>(
+                builder: (context, homeProvider, child) {
+                return PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      currentIndexValue.value = index;
+                      if (index == homeProvider.instaUserList.length - 6) {
+                        _fetchMoreMainSheet();
+                      }
+                    },
+                    itemCount: homeProvider.instaUserList.length,
+                    itemBuilder: (context, index) {
+                      return CustomWebView(
+                          initialUrl: homeProvider
+                              .instaUserList[index].userProfilelink);
+                    });
+              })
+            : Center(
+                child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: "Another Session is in Active State\n",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5
+                        .copyWith(color: Colors.grey),
+                    children: [
+                      TextSpan(
+                          text: "Pull Down To Refresh!",
+                          style: Theme.of(context)
+                              .textTheme
+                              .button
+                              .copyWith(color: Colors.grey)),
+                    ]),
+              )),
+      ),
+      isLoginValue && _loginProvider.currentLoginInfo.isLogin
+          ? Positioned(
+              bottom: MediaQuery.of(context).padding.bottom,
+              left: 0,
+              right: 0,
+              child: RatingBarWidget(
+                  databasehelper: databasehelper,
+                  pageController: _pageController),
+            )
+          : Container(),
+    ];
   }
 }

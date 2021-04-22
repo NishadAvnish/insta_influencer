@@ -31,8 +31,6 @@ class CustomPopUpMenu extends StatelessWidget {
             "${rating}star ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().millisecond}.csv";
 
         Directory _dir = await getApplicationDocumentsDirectory();
-        print(_dir);
-        // _dir = Directory("$_dir/InstaInflucerCSV");
 
         if (!_dir.existsSync()) {
           _dir = await _dir.create(recursive: true);
@@ -41,8 +39,7 @@ class CustomPopUpMenu extends StatelessWidget {
         await File(Directory(path.join(_dir.path, _fileName)).path)
             .writeAsString(csvData);
 
-        final snackBar =
-            SnackBar(content: Text('File saved to InstaInflucerCSV'));
+        final snackBar = SnackBar(content: Text('File saved!!'));
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
@@ -51,7 +48,6 @@ class CustomPopUpMenu extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } catch (e) {
-      print(e);
       final snackBar =
           SnackBar(content: Text('Can\'t save : Something went wrong'));
       ScaffoldMessenger.of(context).hideCurrentSnackBar();

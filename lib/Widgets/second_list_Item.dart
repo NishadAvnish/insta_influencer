@@ -28,10 +28,16 @@ class ListItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      profile.userName,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Flexible(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        child: Text(
+                          profile.userName,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
                     profile.category == "null"
                         ? SizedBox()
@@ -54,7 +60,10 @@ class ListItem extends StatelessWidget {
                             ),
                             SizedBox(width: 3),
                             Text(
-                              "${profile.avgLike}",
+                              profile.avgLike.length < 9
+                                  ? "${profile.avgLike}"
+                                  : "${profile.avgLike.substring(0, 9)}",
+                              overflow: TextOverflow.clip,
                               style: TextStyle(fontSize: 12),
                             ),
                           ],
@@ -83,40 +92,36 @@ class ListItem extends StatelessWidget {
                     ? IconButton(
                         icon: Icon(Icons.email),
                         onPressed: () {
-                          _openEmail(profile.email);
-                          // Clipboard.setData(new ClipboardData(
-                          //         text: profile.userProfilelink))
-                          //     .then((value) {
-                          //   ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //       content: Text("Email copied to clipboard")));
-                          // });
+                          _openEmail(profile.email, context);
                         })
                     : SizedBox()
               ],
             ),
-          )
-
-          // ListTile(
-          //   leading: RotatedBox(quarterTurns: -1, child: Text("Category")),
-          //   title: Text("Name"),
-          // ),
-          ),
+          )),
     );
   }
 
-  Future<void> _openEmail(String emailTo) async {
-    final Uri params = Uri(
-      scheme: 'mailto',
-      path: emailTo,
-      // query: 'subject=""&body=""', //add subject and body here
-    );
+  Future<void> _openEmail(String emailTo, BuildContext context) async {
+    try {
+      final Uri params = Uri(
+        scheme: 'mailto',
+        path: emailTo,
+        // query: 'subject=""&body=""', //add subject and body here
+      );
 
-    var url = params.toString();
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch Email';
+      var url = params.toString();
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch Email';
+      }
+    } catch (e) {
+      Clipboard.setData(new ClipboardData(text: profile.userProfilelink))
+          .then((value) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Seems like no app available! Copied to clipboard")));
+      });
     }
   }
 }

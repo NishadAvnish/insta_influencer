@@ -129,7 +129,8 @@ class DatabaseHelper {
       instaTable = instaTable_2;
     } else
       instaTable = instaTable_3;
-    return await dbClient.delete(
+
+    final i = await dbClient.delete(
       instaTable,
       where: '$colUserid = ?',
       whereArgs: [userId],
