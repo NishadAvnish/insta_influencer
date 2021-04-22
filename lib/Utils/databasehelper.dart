@@ -130,11 +130,24 @@ class DatabaseHelper {
     } else
       instaTable = instaTable_3;
 
-    final i = await dbClient.delete(
+    await dbClient.delete(
       instaTable,
       where: '$colUserid = ?',
       whereArgs: [userId],
     );
+  }
+
+  Future<void> deleteAll({int rating}) async {
+    var dbClient = await database;
+    String instaTable;
+    if (rating == 1) {
+      instaTable = instaTable_1;
+    } else if (rating == 2) {
+      instaTable = instaTable_2;
+    } else
+      instaTable = instaTable_3;
+
+    await dbClient.delete(instaTable, where: "1");
   }
 
   Future close() async {

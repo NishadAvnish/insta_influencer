@@ -13,7 +13,7 @@ class ListItem extends StatelessWidget {
       height: 100,
       child: Card(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20))),
+              borderRadius: BorderRadius.all(Radius.circular(16))),
           elevation: 2,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),

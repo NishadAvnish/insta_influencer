@@ -79,65 +79,122 @@ class _SecondScreenState extends State<SecondScreen> {
                           ? Center(
                               child: Text("No Data Found!"),
                             )
-                          : ListView.builder(
-                              itemBuilder: (context, int index) {
-                                ProfileModel profile = ProfileModel();
-                                profile = snapshot.savedDatabaselist[index];
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 05),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                          "/singleUserWeb",
-                                          arguments: profile.userProfilelink);
-                                    },
-                                    child: Dismissible(
-                                      // Each Dismissible must contain a Key. Keys allow Flutter to
-                                      // uniquely identify widgets.
-                                      key: UniqueKey(),
-
-                                      // Provide a function that tells the app
-                                      // what to do after an item has been swiped away.
-                                      onDismissed: (direction) {
-                                        // Remove the item from the data source.
-                                        Provider.of<DatabaseHelperProvider>(
-                                                context,
-                                                listen: false)
-                                            .deleteFromDatabase(
-                                                userId: profile.userid,
-                                                rating: _currentGridIndex + 1)
-                                            .then((value) {
-                                          // Show a snackbar. This snackbar could also contain "Undo" actions.
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentSnackBar();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      "Item deleted Successfully!")));
-                                        }).catchError((e) {
-                                          setState(() {});
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentSnackBar();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      "Something went wrong!")));
-                                        });
-                                      },
-                                      child: ListItem(
-                                        profile: profile,
-                                      ),
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 03),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  MaterialButton(
+                                    onPressed: () => _showDialog(),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        side: BorderSide(color: Colors.red)),
+                                    child: Text(
+                                      "Delete All ${_currentGridIndex + 1}*",
+                                      style: Theme.of(context).textTheme.button,
                                     ),
                                   ),
-                                );
-                              },
-                              itemCount: snapshot.savedDatabaselist.length,
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemBuilder: (context, int index) {
+                                        ProfileModel profile = ProfileModel();
+                                        profile =
+                                            snapshot.savedDatabaselist[index];
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).pushNamed(
+                                                "/singleUserWeb",
+                                                arguments:
+                                                    profile.userProfilelink);
+                                          },
+                                          child: Dismissible(
+                                            // Each Dismissible must contain a Key. Keys allow Flutter to
+                                            // uniquely identify widgets.
+                                            key: UniqueKey(),
+                                            direction:
+                                                DismissDirection.endToStart,
+
+                                            // Provide a function that tells the app
+                                            // what to do after an item has been swiped away.
+                                            onDismissed: (direction) {
+                                              // Remove the item from the data source.
+                                              if (direction ==
+                                                  DismissDirection.endToStart) {
+                                                Provider.of<DatabaseHelperProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .deleteFromDatabase(
+                                                        userId: profile.userid,
+                                                        rating:
+                                                            _currentGridIndex +
+                                                                1)
+                                                    .catchError((e) {
+                                                  setState(() {});
+                                                  ScaffoldMessenger.of(context)
+                                                      .hideCurrentSnackBar();
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(SnackBar(
+                                                          content: Text(
+                                                              "Something went wrong!")));
+                                                });
+                                              }
+                                            },
+                                            child: ListItem(
+                                              profile: profile,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      itemCount:
+                                          snapshot.savedDatabaselist.length,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                     }),
             ),
           ],
         ));
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Are you Sure?"),
+          content: Text(
+              "This operation cannot be undone. Please make sure you have exported the data."),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            MaterialButton(
+              child: Text("Yes"),
+              onPressed: () async {
+                await Provider.of<DatabaseHelperProvider>(context,
+                        listen: false)
+                    .deleteAllFromDatabase(rating: _currentGridIndex + 1);
+
+                Navigator.of(context).pop();
+              },
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            MaterialButton(
+              child: Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _ratingBar(String text, int index) {

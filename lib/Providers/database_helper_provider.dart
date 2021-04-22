@@ -25,4 +25,15 @@ class DatabaseHelperProvider with ChangeNotifier {
       throw e;
     }
   }
+
+  Future<void> deleteAllFromDatabase({rating}) async {
+    try {
+      await DatabaseHelper().deleteAll(rating: rating);
+      _saveddata = [];
+
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
+  }
 }

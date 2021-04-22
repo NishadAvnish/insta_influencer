@@ -70,8 +70,15 @@ class HomeAppBar extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           color: Colors.blue),
                                 ),
-                                Text(_homeProvider
-                                    .instaUserList[currentPageIndex].avgLike),
+                                Text(
+                                  _homeProvider.instaUserList[currentPageIndex]
+                                              .avgLike.length <
+                                          9
+                                      ? "${_homeProvider.instaUserList[currentPageIndex].avgLike}"
+                                      : "${_homeProvider.instaUserList[currentPageIndex].avgLike.substring(0, 9)}",
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(fontSize: 12),
+                                ),
                               ],
                             ),
                           ],
