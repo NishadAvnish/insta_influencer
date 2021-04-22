@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   DatabaseHelper databasehelper;
   PageController _pageController;
   bool _isLoading;
+  String _errorText = "";
 
   LoginCurrentNoProvider _loginProvider;
   @override
@@ -43,38 +44,45 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refresh() async {
-    await Provider.of<LoginCurrentNoProvider>(context, listen: false)
-        .fetchLoginData();
-    if (!isLogin.value) {
-      if (_loginProvider.currentLoginInfo.isLogin == false ||
-          _loginProvider.currentLoginInfo.isLogin == true &&
-              DateTime.now()
-                      .difference(DateTime.parse(
-                          _loginProvider.currentLoginInfo.dateTime))
-                      .inMinutes >=
-                  2.50) {
-        final _provider =
-            Provider.of<InstaProfileProvider>(context, listen: false);
+    try {
+      await Provider.of<LoginCurrentNoProvider>(context, listen: false)
+          .fetchLoginData();
+      if (!isLogin.value) {
+        if (_loginProvider.currentLoginInfo.isLogin == false ||
+            _loginProvider.currentLoginInfo.isLogin == true &&
+                DateTime.now()
+                        .difference(DateTime.parse(
+                            _loginProvider.currentLoginInfo.dateTime))
+                        .inMinutes >=
+                    2.50) {
+          final _provider =
+              Provider.of<InstaProfileProvider>(context, listen: false);
 
-        _loginProvider.login(); // to change the current status of loginData.
+          _loginProvider.login(); // to change the current status of loginData.
 
-        if (_provider.islast == false) {
-          await _provider.fetchMainSheetData(
-              currentRowNo: _loginProvider.currentLoginInfo.currentNo.toInt());
+          if (_provider.islast == false) {
+            await _provider.fetchMainSheetData(
+                currentRowNo:
+                    _loginProvider.currentLoginInfo.currentNo.toInt());
+          }
+          isLogin.value = true;
         }
-        isLogin.value = true;
-      }
 
+        if (isLogin.value)
+
+          //start periodic timer to call api at every 2 minute time if user logined
+          startCron(context);
+      }
+    } catch (e) {
+      setState(() {
+        _errorText = e.toString();
+      });
+    } finally {
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
-
-      if (isLogin.value)
-
-        //start periodic timer to call api at every 2 minute time if user logined
-        startCron(context);
     }
   }
 
@@ -107,43 +115,56 @@ class _HomePageState extends State<HomePage> {
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : MediaQuery.removePadding(
-                  context: context,
-                  removeBottom: true,
-                  child: ValueListenableBuilder(
-                      valueListenable: isLogin,
-                      builder: (context, isLoginValue, _) {
-                        return Container(
-                          width: _size.width,
-                          height: _size.height,
-                          child: Column(
-                            children: [
-                              HomeAppBar(
-                                isCurrentlyLogin: isLoginValue &&
-                                    _loginProvider.currentLoginInfo.isLogin,
-                              ),
-                              RefreshIndicator(
-                                onRefresh: () => _refresh(),
-                                child: SingleChildScrollView(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  child: Container(
-                                    width: _size.width,
-                                    height: _size.height -
-                                        kToolbarHeight -
-                                        MediaQuery.of(context).padding.top -
-                                        MediaQuery.of(context).padding.bottom,
-                                    constraints: BoxConstraints(minHeight: 150),
-                                    child: Stack(
-                                        children:
-                                            _homePageMainUI(isLoginValue)),
+              : _errorText != ""
+                  ? Center(
+                      child: Text(
+                        _errorText,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5
+                            .copyWith(color: Colors.grey),
+                      ),
+                    )
+                  : MediaQuery.removePadding(
+                      context: context,
+                      removeBottom: true,
+                      child: ValueListenableBuilder(
+                          valueListenable: isLogin,
+                          builder: (context, isLoginValue, _) {
+                            return Container(
+                              width: _size.width,
+                              height: _size.height,
+                              child: Column(
+                                children: [
+                                  HomeAppBar(
+                                    isCurrentlyLogin: isLoginValue &&
+                                        _loginProvider.currentLoginInfo.isLogin,
                                   ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      }),
-                ),
+                                  RefreshIndicator(
+                                    onRefresh: () => _refresh(),
+                                    child: SingleChildScrollView(
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      child: Container(
+                                        width: _size.width,
+                                        height: _size.height -
+                                            kToolbarHeight -
+                                            MediaQuery.of(context).padding.top -
+                                            MediaQuery.of(context)
+                                                .padding
+                                                .bottom,
+                                        constraints:
+                                            BoxConstraints(minHeight: 150),
+                                        child: Stack(
+                                            children:
+                                                _homePageMainUI(isLoginValue)),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
         ),
       ),
     );
