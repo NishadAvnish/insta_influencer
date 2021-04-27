@@ -26,7 +26,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     databasehelper = DatabaseHelper();
-
     _pageController = PageController(initialPage: currentIndexValue.value);
 
     if (!mounted) return;
@@ -107,12 +106,6 @@ class _HomePageState extends State<HomePage> {
     final _size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar:
-          isLogin.value && _loginProvider.currentLoginInfo.isLogin
-              ? RatingBarWidget(
-                  databasehelper: databasehelper,
-                  pageController: _pageController)
-              : Container(),
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
         child: SafeArea(
@@ -124,30 +117,39 @@ class _HomePageState extends State<HomePage> {
               : MediaQuery.removePadding(
                   context: context,
                   removeBottom: true,
-                  child: Container(
-                    width: _size.width,
-                    height: _size.height,
-                    child: ValueListenableBuilder(
-                        valueListenable: isLogin,
-                        builder: (context, isLoginValue, _) {
-                          return Column(
-                            children: [
-                              HomeAppBar(
-                                isCurrentlyLogin: isLoginValue &&
-                                    _loginProvider.currentLoginInfo.isLogin,
-                              ),
-                              Expanded(
-                                child: RefreshIndicator(
-                                  onRefresh: () => _refresh(),
-                                  child: SingleChildScrollView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      child: _homePageMainUI(isLoginValue)),
+                  // child: Container(
+                  //   width: _size.width,
+                  //   height: _size.height ,
+                  child: ValueListenableBuilder(
+                      valueListenable: isLogin,
+                      builder: (context, isLoginValue, _) {
+                        return Column(
+                          children: [
+                            HomeAppBar(
+                              isCurrentlyLogin: isLoginValue &&
+                                  _loginProvider.currentLoginInfo.isLogin,
+                            ),
+                            Expanded(
+                              child: RefreshIndicator(
+                                onRefresh: () => _refresh(),
+                                child: SingleChildScrollView(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  child: _homePageMainUI(isLoginValue),
                                 ),
                               ),
-                            ],
-                          );
-                        }),
-                  ),
+                            ),
+                            isLoginValue &&
+                                    _loginProvider.currentLoginInfo.isLogin
+                                ? RatingBarWidget(
+                                    databasehelper: databasehelper,
+                                    pageController: _pageController)
+                                : Container(
+                                    color: Colors.red,
+                                  ),
+                          ],
+                        );
+                      }),
+                  // ),
                 ),
         ),
       ),
@@ -155,70 +157,74 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _homePageMainUI(bool isLoginValue) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: isLoginValue && _loginProvider.currentLoginInfo.isLogin
-            ? Consumer<InstaProfileProvider>(
-                builder: (context, homeProvider, child) {
-                return PageView.builder(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      currentIndexValue.value = index;
-                      if (index == homeProvider.instaUserList.length - 6) {
-                        _fetchMoreMainSheet();
-                      }
-                    },
-                    itemCount: homeProvider.instaUserList.length,
-                    itemBuilder: (context, index) {
-                      return CustomWebView(
-                          initialUrl: homeProvider
-                              .instaUserList[index].userProfilelink);
-                    });
-              })
-            : _errorText != ""
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        _errorText,
+    return
+        // [
+        Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: isLoginValue && _loginProvider.currentLoginInfo.isLogin
+                ? Consumer<InstaProfileProvider>(
+                    builder: (context, homeProvider, child) {
+                    return PageView.builder(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          currentIndexValue.value = index;
+                          if (index == homeProvider.instaUserList.length - 6) {
+                            _fetchMoreMainSheet();
+                          }
+                        },
+                        itemCount: homeProvider.instaUserList.length,
+                        itemBuilder: (context, index) {
+                          return CustomWebView(
+                              initialUrl: homeProvider
+                                  .instaUserList[index].userProfilelink);
+                        });
+                  })
+                : _errorText != ""
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            _errorText,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5
+                                .copyWith(color: Colors.grey),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: RichText(
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            .copyWith(color: Colors.grey),
-                      ),
-                    ),
-                  )
-                : Center(
-                    child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                        text: "Another Session is in Active State\n",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5
-                            .copyWith(color: Colors.grey),
-                        children: [
-                          TextSpan(
-                              text: "Pull Down To Refresh!",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .button
-                                  .copyWith(color: Colors.grey)),
-                        ]),
-                  )));
-    // ),
+                        text: TextSpan(
+                            text: "Another Session is in Active State\n",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5
+                                .copyWith(color: Colors.grey),
+                            children: [
+                              TextSpan(
+                                  text: "Pull Down To Refresh!",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .button
+                                      .copyWith(color: Colors.grey)),
+                            ]),
+                      )));
+
     // isLoginValue && _loginProvider.currentLoginInfo.isLogin
     //     ? Positioned(
-    //         bottom: MediaQuery.of(context).padding.bottom,
+    //         bottom: 0,
     //         left: 0,
     //         right: 0,
     //         child: RatingBarWidget(
     //             databasehelper: databasehelper,
     //             pageController: _pageController),
     //       )
-    //     : Container(),
+    //     : Container(
+    //         color: Colors.red,
+    //       ),
     // ];
   }
 }
