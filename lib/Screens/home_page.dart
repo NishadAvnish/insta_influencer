@@ -107,6 +107,12 @@ class _HomePageState extends State<HomePage> {
     final _size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      bottomNavigationBar:
+          isLogin.value && _loginProvider.currentLoginInfo.isLogin
+              ? RatingBarWidget(
+                  databasehelper: databasehelper,
+                  pageController: _pageController)
+              : Container(),
       body: WillPopScope(
         onWillPop: () => onBackPressed(context),
         child: SafeArea(
@@ -118,48 +124,40 @@ class _HomePageState extends State<HomePage> {
               : MediaQuery.removePadding(
                   context: context,
                   removeBottom: true,
-                  child: ValueListenableBuilder(
-                      valueListenable: isLogin,
-                      builder: (context, isLoginValue, _) {
-                        return Container(
-                          width: _size.width,
-                          height: _size.height,
-                          child: Column(
+                  child: Container(
+                    width: _size.width,
+                    height: _size.height,
+                    child: ValueListenableBuilder(
+                        valueListenable: isLogin,
+                        builder: (context, isLoginValue, _) {
+                          return Column(
                             children: [
                               HomeAppBar(
                                 isCurrentlyLogin: isLoginValue &&
                                     _loginProvider.currentLoginInfo.isLogin,
                               ),
-                              RefreshIndicator(
-                                onRefresh: () => _refresh(),
-                                child: SingleChildScrollView(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  child: Container(
-                                    width: _size.width,
-                                    height: _size.height -
-                                        kToolbarHeight -
-                                        MediaQuery.of(context).padding.top -
-                                        MediaQuery.of(context).padding.bottom,
-                                    constraints: BoxConstraints(minHeight: 150),
-                                    child: Stack(
-                                        children:
-                                            _homePageMainUI(isLoginValue)),
-                                  ),
+                              Expanded(
+                                child: RefreshIndicator(
+                                  onRefresh: () => _refresh(),
+                                  child: SingleChildScrollView(
+                                      physics: AlwaysScrollableScrollPhysics(),
+                                      child: _homePageMainUI(isLoginValue)),
                                 ),
-                              )
+                              ),
                             ],
-                          ),
-                        );
-                      }),
+                          );
+                        }),
+                  ),
                 ),
         ),
       ),
     );
   }
 
-  List<Widget> _homePageMainUI(bool isLoginValue) {
-    return [
-      Positioned.fill(
+  Widget _homePageMainUI(bool isLoginValue) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: isLoginValue && _loginProvider.currentLoginInfo.isLogin
             ? Consumer<InstaProfileProvider>(
                 builder: (context, homeProvider, child) {
@@ -209,18 +207,18 @@ class _HomePageState extends State<HomePage> {
                                   .button
                                   .copyWith(color: Colors.grey)),
                         ]),
-                  )),
-      ),
-      isLoginValue && _loginProvider.currentLoginInfo.isLogin
-          ? Positioned(
-              bottom: MediaQuery.of(context).padding.bottom,
-              left: 0,
-              right: 0,
-              child: RatingBarWidget(
-                  databasehelper: databasehelper,
-                  pageController: _pageController),
-            )
-          : Container(),
-    ];
+                  )));
+    // ),
+    // isLoginValue && _loginProvider.currentLoginInfo.isLogin
+    //     ? Positioned(
+    //         bottom: MediaQuery.of(context).padding.bottom,
+    //         left: 0,
+    //         right: 0,
+    //         child: RatingBarWidget(
+    //             databasehelper: databasehelper,
+    //             pageController: _pageController),
+    //       )
+    //     : Container(),
+    // ];
   }
 }
