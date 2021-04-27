@@ -87,18 +87,24 @@ class RatingBarWidget extends StatelessWidget {
               ),
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: CircleBorder(), primary: Colors.red),
-            onPressed: () {
-              _pageController.nextPage(
-                  duration: Duration(milliseconds: 50), curve: Curves.easeIn);
-            },
-            child: Icon(
-              Icons.close,
-              size: 50,
-              color: Colors.white,
-            ),
+          GestureDetector(
+            onTap: () => _pageController.nextPage(
+                duration: Duration(milliseconds: 50), curve: Curves.easeIn),
+            child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    color: Colors.red,
+                    border: Border.all(
+                        width: 1,
+                        color: _deviceBrightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black),
+                    shape: BoxShape.circle),
+                child: Icon(
+                  Icons.close,
+                  size: 50,
+                )),
           ),
         ],
       ),
