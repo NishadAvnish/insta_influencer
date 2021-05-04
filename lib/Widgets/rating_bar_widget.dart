@@ -117,7 +117,7 @@ class RatingBarWidget extends StatelessWidget {
 
     //save currentIndex at every button click
     Provider.of<LoginCurrentNoProvider>(context, listen: false)
-        .changeCurrentStatus(isLogin: true);
+        .changeCurrentStatus(flag: 1);
 
     _pageController.nextPage(
         duration: Duration(milliseconds: 50), curve: Curves.easeIn);

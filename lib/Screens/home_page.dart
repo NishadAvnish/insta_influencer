@@ -71,17 +71,16 @@ class _HomePageState extends State<HomePage> {
 
           //start periodic timer to call api at every 2 minute time if user logined
           startCron(context);
-      }
-    } catch (e) {
-      setState(() {
-        _errorText = e.toString();
-      });
-    } finally {
-      if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
+    } catch (e) {
+      setState(() {
+        _errorText = e.toString();
+        _isLoading = false;
+      });
+      print("from catch");
     }
   }
 
@@ -205,7 +204,8 @@ class _HomePageState extends State<HomePage> {
                                 .copyWith(color: Colors.grey),
                             children: [
                               TextSpan(
-                                  text: "Pull Down To Refresh!",
+                                  text:
+                                      "Pull Down To Refresh! or wait for 3 minutes",
                                   style: Theme.of(context)
                                       .textTheme
                                       .button

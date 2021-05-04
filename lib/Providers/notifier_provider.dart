@@ -11,6 +11,6 @@ Function startCron(BuildContext context) {
   cron = Cron();
   cron.schedule(Schedule.parse('*/2 * * * *'), () async {
     Provider.of<LoginCurrentNoProvider>(context, listen: false)
-        .changeCurrentStatus(isLogin: true);
+        .changeCurrentStatus(flag: 3);
   });
 }

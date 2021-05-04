@@ -8,17 +8,11 @@ class LoginCurrentNoProvider with ChangeNotifier {
   int _count = 0;
   LoginCurrentModel _currentLoginInfo;
 
-  int _currentRowNo = 1;
-
   String _fetchLoginDataUrl =
       "https://script.google.com/macros/s/AKfycbzx4BK_VgUPqLrZ0Ki87HOvtL9_yRQIOab0iJokvf02OqHbLb5OyZNdebDoVDNHql-m/exec";
 
   String _loginUrl =
       "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec";
-
-  int get currentRowNo {
-    return _currentRowNo;
-  }
 
   int get count {
     return _count;
@@ -40,8 +34,6 @@ class LoginCurrentNoProvider with ChangeNotifier {
               _result[0]["currentNo"] == "" ? 1 : _result[0]["currentNo"],
           isLogin: _result[0]["isLogin"],
           dateTime: _result[0]["dateTime"]);
-      _currentRowNo =
-          _result[0]["currentNo"] == "" ? 1 : _result[0]["currentNo"];
       _count = 1;
 
       notifyListeners();
@@ -50,19 +42,21 @@ class LoginCurrentNoProvider with ChangeNotifier {
     }
   }
 
-  Future<void> changeCurrentStatus({bool isLogin}) {
-    // isLogin = false logout button clicked
-    var _current;
-    if (isLogin) {
+  Future<void> changeCurrentStatus({int flag}) {
+    //flag=1 login and bottom navigation button(rating_Bar)
+    //flag =2 logout
+    //flag=3  timer Cron
+    int _current;
+    if (flag == 1) {
       _current = _currentLoginInfo.currentNo + currentIndexValue.value + 1;
     } else {
       _current = _currentLoginInfo.currentNo + currentIndexValue.value;
     }
     var _url = Uri.parse(
-        "$_loginUrl?current=${_current}&islogin=${isLogin}&datetime=${DateTime.now()}");
+        "$_loginUrl?current=${_current}&islogin=${flag != 2 ? true : false}&datetime=${DateTime.now()}");
 
     http.get(_url).then((value) {
-      if (!isLogin) {
+      if (flag == 2) {
         cron.close();
         _currentLoginInfo = LoginCurrentModel(
             currentNo: _currentLoginInfo.currentNo,
