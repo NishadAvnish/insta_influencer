@@ -30,6 +30,11 @@ class HomeAppBar extends StatelessWidget {
                             Provider.of<LoginCurrentNoProvider>(context,
                                     listen: false)
                                 .changeCurrentStatus(isLogin: false);
+                            Provider.of<InstaProfileProvider>(context,
+                                    listen: false)
+                                .clearList();
+                            currentIndexValue.value = 0;
+
                             isLogin.value = false;
                           })
                       : Container(),

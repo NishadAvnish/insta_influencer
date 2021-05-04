@@ -37,6 +37,10 @@ class InstaProfileProvider with ChangeNotifier {
     }
   }
 
+  void clearList() {
+    _instaUserList.clear();
+  }
+
   bool get islast {
     return _isLast;
   }
