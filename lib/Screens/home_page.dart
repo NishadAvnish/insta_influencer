@@ -51,7 +51,8 @@ class _HomePageState extends State<HomePage> {
             _loginProvider.currentLoginInfo.isLogin == true &&
                 DateTime.now()
                         .difference(DateTime.parse(
-                            _loginProvider.currentLoginInfo.dateTime))
+                                _loginProvider.currentLoginInfo.dateTime)
+                            .toUtc())
                         .inMinutes >=
                     2.50) {
           final _provider =
@@ -72,7 +73,9 @@ class _HomePageState extends State<HomePage> {
           //start periodic timer to call api at every 2 minute time if user logined
           startCron(context);
         setState(() {
+          print("A.........................................................");
           _isLoading = false;
+          _errorText = "";
         });
       }
     } catch (e) {
@@ -80,7 +83,6 @@ class _HomePageState extends State<HomePage> {
         _errorText = e.toString();
         _isLoading = false;
       });
-      print("from catch");
     }
   }
 
@@ -102,7 +104,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final _size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
@@ -116,9 +117,6 @@ class _HomePageState extends State<HomePage> {
               : MediaQuery.removePadding(
                   context: context,
                   removeBottom: true,
-                  // child: Container(
-                  //   width: _size.width,
-                  //   height: _size.height ,
                   child: ValueListenableBuilder(
                       valueListenable: isLogin,
                       builder: (context, isLoginValue, _) {

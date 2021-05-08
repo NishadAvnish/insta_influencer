@@ -9,10 +9,14 @@ class LoginCurrentNoProvider with ChangeNotifier {
   LoginCurrentModel _currentLoginInfo;
 
   String _fetchLoginDataUrl =
-      "https://script.google.com/macros/s/AKfycbzx4BK_VgUPqLrZ0Ki87HOvtL9_yRQIOab0iJokvf02OqHbLb5OyZNdebDoVDNHql-m/exec";
+      "https://script.google.com/macros/s/AKfycby11D7gUk0CJv7t2YdbV96ofqKNkF9hS_kJhW8yKJnMgJhqZwQ/exec";
+  // String _fetchLoginDataUrl =
+  //     "https://script.google.com/macros/s/AKfycbzx4BK_VgUPqLrZ0Ki87HOvtL9_yRQIOab0iJokvf02OqHbLb5OyZNdebDoVDNHql-m/exec";
 
   String _loginUrl =
-      "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec";
+      "https://script.google.com/macros/s/AKfycbzMFBsat-s6Im7nn8PMS94056uAFi-Oy26CYn5o430LfB26qh8x/exec";
+  // String _loginUrl =
+  //     "https://script.google.com/macros/s/AKfycbxsT4sNRUAN_UjFzuN-WlbJSiUpWOxyPF7FvvmYChxq18nUducNjMKALb4G7vx4v9Vcng/exec";
 
   int get count {
     return _count;
@@ -53,7 +57,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
       _current = _currentLoginInfo.currentNo + currentIndexValue.value;
     }
     var _url = Uri.parse(
-        "$_loginUrl?current=${_current}&islogin=${flag != 2 ? true : false}&datetime=${DateTime.now()}");
+        "$_loginUrl?current=${_current}&islogin=${flag != 2 ? true : false}&datetime=${DateTime.now().toUtc()}");
 
     http.get(_url).then((value) {
       if (flag == 2) {
@@ -73,7 +77,7 @@ class LoginCurrentNoProvider with ChangeNotifier {
   Future<void> login() {
     var _url;
     _url = Uri.parse(
-        "$_loginUrl?current=${currentLoginInfo.currentNo + currentIndexValue.value}&islogin=${true}&datetime=${DateTime.now()}");
+        "$_loginUrl?current=${currentLoginInfo.currentNo + currentIndexValue.value}&islogin=${true}&datetime=${DateTime.now().toUtc()}");
 
     http.get(_url).then((value) {
       _currentLoginInfo = LoginCurrentModel(

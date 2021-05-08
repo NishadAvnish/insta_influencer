@@ -8,8 +8,10 @@ class InstaProfileProvider with ChangeNotifier {
   List<ProfileModel> _instaUserList = [];
 
   bool _isLast = false;
+  // String _mainSheetDataUrl =
+  //     "https://script.google.com/macros/s/AKfycbwZFw2For7VfT45xpJ1EhzGuJ3K36PWY6cjL0-WNWOseErqJdi4s_nYGeEQI5luetYP/exec";
   String _mainSheetDataUrl =
-      "https://script.google.com/macros/s/AKfycbwZFw2For7VfT45xpJ1EhzGuJ3K36PWY6cjL0-WNWOseErqJdi4s_nYGeEQI5luetYP/exec";
+      "https://script.google.com/macros/s/AKfycbzrYBl5982gjLUgwcVV12UKPsOKCUSRinySgghK7yfBz6_a1SDM/exec";
 
   Future<void> fetchMainSheetData({int currentRowNo}) async {
     if (startingRow == 1) {
